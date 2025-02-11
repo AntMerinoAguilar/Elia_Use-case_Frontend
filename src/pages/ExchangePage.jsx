@@ -5,7 +5,7 @@ const ExchangePage = () => {
   return (
     <>
       <Navigation />
-      <h1>Page d'Échange</h1>
+      <h1>Exchange Page</h1>
       <p>Bienvenue sur la page des échanges d'horaires.</p>
     </>
   );

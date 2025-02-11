@@ -5,7 +5,7 @@ import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
 import ExchangePage from "./pages/ExchangePage";
 import NotificationPage from "./pages/NotificationPage";
-import UnavailabilitiesPage from "./pages/UnavailabilitiesPage";
+import NewRequestPage from "./pages/NewRequestPage";
 
 function App() {
   return (
@@ -17,7 +17,7 @@ function App() {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/exchange" element={<ExchangePage />} />
         <Route path="/notifications" element={<NotificationPage />} />
-        <Route path="/unavailabilities" element={<UnavailabilitiesPage />} />
+        <Route path="/newRequest" element={<NewRequestPage />} />
       </Routes>
     </Router>
   );

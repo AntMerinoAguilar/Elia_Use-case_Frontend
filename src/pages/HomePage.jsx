@@ -1,7 +1,7 @@
 import React from "react";
 import Navigation from "../components/Navigation";
 import Calendar from "../components/Calendar";
-import UnavailabilitiesNav from "../components/UnavailabilitiesNav";
+import AddButton from "../components/AddButton";
 
 const HomePage = () => {
   return (
@@ -9,7 +9,7 @@ const HomePage = () => {
       <Navigation />
       <h1>Home Page</h1>
       <Calendar />
-      <UnavailabilitiesNav />
+      <AddButton />
     </>
   );
 };

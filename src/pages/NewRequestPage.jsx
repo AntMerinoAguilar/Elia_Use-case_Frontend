@@ -1,14 +1,14 @@
 import React from "react";
 import Navigation from "../components/Navigation";
 
-const UnavailabilitiesPage = () => {
+const NewRequestPage = () => {
   return (
     <>
       <Navigation />
-      <h1>Page des Indisponibilités</h1>
+      <h1>New Request PAGE</h1>
       <p>Ajoutez ou gérez vos indisponibilités ici.</p>
     </>
   );
 };
 
-export default UnavailabilitiesPage;
+export default NewRequestPage;
