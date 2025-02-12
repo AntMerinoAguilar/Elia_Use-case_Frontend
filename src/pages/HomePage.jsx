@@ -1,6 +1,6 @@
 import React from "react";
 import Navigation from "../components/Navigation";
-import Calendar from "../components/Calendar";
+import MyCalendar from "../components/Calendar";
 import AddButton from "../components/AddButton";
 
 const HomePage = () => {
@@ -8,7 +8,7 @@ const HomePage = () => {
     <>
       <Navigation />
       <h1>Home Page</h1>
-      <Calendar />
+      <MyCalendar />
       <AddButton />
     </>
   );
