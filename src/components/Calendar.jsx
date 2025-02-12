@@ -7,6 +7,7 @@ import axios from "axios"; //utilisé pour effectuer des requêtes HTTP pour ré
 const localizer = momentLocalizer(moment); // permet d'utiliser "Moment.js" pour gérer et formater les dates et heures dans le calendrier
 
 // codé en dur, faudra penser à faire une logique dans le back ou front qui reprend la couleur de l'agent
+// mise à jour de la db avec "color" pour les agents
 const agentColors = {
   HBR: "#FFD700", // Jaune
   CME: "#FF4500", // Rouge
