@@ -3,7 +3,7 @@ import React from "react";
 const LoginForm = ({ username, password, onUsernameChange, onPasswordChange, onSubmit }) => {
   return (
     <form onSubmit={onSubmit}>
-      <h2>Connexion</h2>
+      <h2>Form</h2>
       <input
         type="text"
         placeholder="Nom d'utilisateur"

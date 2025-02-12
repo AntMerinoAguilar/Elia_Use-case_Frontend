@@ -1,12 +1,16 @@
 import React from "react";
+import Navigation from "../components/Navigation";
 import MyCalendar from "../components/Calendar";
+import AddButton from "../components/AddButton";
 
 const HomePage = () => {
   return (
-    <div>
-      <h1>Bienvenue sur la page d'accueil</h1>
+    <>
+      <Navigation />
+      <h1>Home Page</h1>
       <MyCalendar />
-    </div>
+      <AddButton />
+    </>
   );
 };
 
