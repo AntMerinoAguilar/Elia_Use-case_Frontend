@@ -6,17 +6,6 @@ import axios from "axios"; //utilisé pour effectuer des requêtes HTTP pour ré
 
 const localizer = momentLocalizer(moment); // permet d'utiliser "Moment.js" pour gérer et formater les dates et heures dans le calendrier
 
-// codé en dur, faudra penser à faire une logique dans le back ou front qui reprend la couleur de l'agent
-// mise à jour de la db avec "color" pour les agents
-const agentColors = {
-  HBR: "#FFD700", // Jaune
-  CME: "#FF4500", // Rouge
-  MGA: "#32CD32", // Vert
-  RSI: "#1E90FF", // Bleu
-  ERO: "#FF69B4", // Bleu
-  JLO: "#8A2BE2", // Violet
-};
-
 const MyCalendar = () => {
   const [events, setEvents] = useState([]);
 
@@ -37,6 +26,7 @@ const MyCalendar = () => {
           allDay: false,
           resource: shift.status,
           agentCode: shift.agentCode,
+          color: shift.agentId.color,
         }));
 
         // Si tu veux afficher les remplacements dans le calendrier (optionnel)
@@ -64,7 +54,7 @@ const MyCalendar = () => {
   }, []);
 
   const eventStyleGetter = (event) => {
-    const backgroundColor = agentColors[event.agentCode];
+    const backgroundColor = event.color || "#ccc"; // Si pas de couleur, gris par défaut
     const style = {
       backgroundColor,
       color: "white",
