@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const RequestForm = () => {
+const NewRequestForm = () => {
   const [formData, setFormData] = useState({
     requesterId: "",
     timeSlot: { startTime: "", endTime: "" }, // Plage pour la demande de remplacement
@@ -175,4 +175,4 @@ const RequestForm = () => {
   );
 };
 
-export default RequestForm;
+export default NewRequestForm;
