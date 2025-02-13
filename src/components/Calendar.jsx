@@ -26,7 +26,7 @@ const MyCalendar = () => {
           allDay: false,
           resource: shift.status,
           agentCode: shift.agentCode,
-          color: shift.agentId.color,
+          color: shift.agentId ? shift.agentId.color : "#f41313",
         }));
 
         // Si tu veux afficher les remplacements dans le calendrier (optionnel)
