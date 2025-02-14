@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAgent } from "../context/AgentContext";
 import { Link } from "react-router-dom"; // Import du Link
+import "../styles/Notifications.css"; 
 
 
 const Notifications = () => {
@@ -42,6 +43,8 @@ const Notifications = () => {
       })
       .catch((error) => console.error("Erreur lors de la mise à jour :", error));
   };
+
+  console.log("Agent connecté :", agent);
 
   return (
     <div className="notifications-container">
