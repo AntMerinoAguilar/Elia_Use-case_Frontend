@@ -3,6 +3,7 @@ import axios from "axios";
 import { useAgent } from "../context/AgentContext";
 import { Link } from "react-router-dom"; // Import du Link
 
+
 const Notifications = () => {
   const { agent } = useAgent();
   const [notifications, setNotifications] = useState([]);
@@ -44,7 +45,7 @@ const Notifications = () => {
 
   return (
     <div className="notifications-container">
-      <h2>📨 Notifications</h2>
+      <h2>Notifications</h2>
       {loading ? (
         <p className="loading">Chargement...</p>
       ) : notifications.length === 0 ? (
@@ -60,7 +61,7 @@ const Notifications = () => {
               >
                 <strong>{notif.type}</strong> - {notif.message}
                 <br />
-                <small>🕒 {new Date(notif.createdAt).toLocaleString()}</small>
+                <small>{new Date(notif.createdAt).toLocaleString()}</small>
               </Link>
             </li>
           ))}
@@ -71,6 +72,7 @@ const Notifications = () => {
 };
 
 export default Notifications;
+
 
 
 
