@@ -59,15 +59,13 @@ const NewRequestForm = () => {
     const { timeSlot, availableSlot } = formData;
     if (!timeSlot.startTime || !timeSlot.endTime || !availableSlot.startTime || !availableSlot.endTime) {
       alert("Veuillez remplir toutes les dates avant d'envoyer la demande.");
+      setLoading(false);
       return;
     }
 
     if (new Date(timeSlot.startTime) >= new Date(timeSlot.endTime)) {
-      alert("La date de début de la plage demandée doit être avant la date de fin.");
-      return;
-    }
-    if (new Date(availableSlot.startTime) >= new Date(availableSlot.endTime)) {
-      alert("La date de début de la fourchette doit être avant la date de fin.");
+      alert("La date de début doit être avant la date de fin.");
+      setLoading(false);
       return;
     }
 
@@ -78,6 +76,7 @@ const NewRequestForm = () => {
       new Date(availableSlot.endTime) < today
     ) {
       alert("Les dates doivent être dans le futur.");
+      setLoading(false);
       return;
     }
 
@@ -98,29 +97,30 @@ const NewRequestForm = () => {
 
       <h3>Plage à remplacer</h3>
       <label>
-        Début de la plage :
+        Début :
         <input
           type="datetime-local"
           name="timeSlot.startTime"
           value={formData.timeSlot.startTime}
           onChange={handleChange}
+          required
         />
       </label>
-      <br />
       <label>
-        Fin de la plage :
+        Fin :
         <input
           type="datetime-local"
           name="timeSlot.endTime"
           value={formData.timeSlot.endTime}
           onChange={handleChange}
+          required
         />
       </label>
       <hr />
 
       <h3>Fourchette proposée pour l'échange</h3>
       <label>
-        Début de la fourchette :
+        Début :
         <input
           type="datetime-local"
           name="availableSlot.startTime"
@@ -128,9 +128,8 @@ const NewRequestForm = () => {
           onChange={handleChange}
         />
       </label>
-      <br />
       <label>
-        Fin de la fourchette :
+        Fin :
         <input
           type="datetime-local"
           name="availableSlot.endTime"
@@ -139,15 +138,10 @@ const NewRequestForm = () => {
         />
       </label>
       <hr />
-      <br />
 
       <label>
         Type de demande :
-        <select
-          name="requestType"
-          value={formData.requestType}
-          onChange={handleChange}
-        >
+        <select name="requestType" value={formData.requestType} onChange={handleChange}>
           <option value="Replacement">Remplacement</option>
           <option value="Swap">Échange</option>
         </select>
@@ -157,7 +151,6 @@ const NewRequestForm = () => {
       <h3>Choisir un destinataire :</h3>
       <AgentSelector onSelectAgent={handleAgentSelect} />
       <br />
-      <br />
 
       <button type="submit">Envoyer la demande</button>
     </form>
@@ -165,3 +158,4 @@ const NewRequestForm = () => {
 };
 
 export default NewRequestForm;
+
