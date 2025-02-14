@@ -1,0 +1,48 @@
+.notifications-container {
+    padding: 20px;
+}
+
+h2 {
+    margin-bottom: 15px;
+}
+
+.loading,
+.no-notifications {
+    font-style: italic;
+    color: #555;
+}
+
+.notification-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.notification-item {
+    margin-bottom: 10px;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    transition: background 0.3s ease-in-out;
+}
+
+.notification-item.unread {
+    background: #f9f9f9;
+    font-weight: bold;
+}
+
+.notification-item.read {
+    background: #e0e0e0;
+    font-weight: normal;
+}
+
+.notification-item:hover {
+    background: #dcdcdc;
+}
+
+.notification-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    width: 100%;
+    height: 100%;
+}

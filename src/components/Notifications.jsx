@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAgent } from "../context/AgentContext";
 import { Link } from "react-router-dom"; // Import du Link
-
+import "../styles/Notifications.css"; // Fichier CSS externe
 
 const Notifications = () => {
   const { agent } = useAgent();
