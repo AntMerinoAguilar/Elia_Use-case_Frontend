@@ -1,13 +1,16 @@
 import React, { useState } from "react";
+import axios from "axios"; // Import pour gérer les requêtes HTTP
 
 const NewRequestForm = () => {
   const [formData, setFormData] = useState({
     requesterId: "",
-    timeSlot: { startTime: "", endTime: "" }, // Plage pour la demande de remplacement
-    requestType: "Replacement", // Valeur par défaut
-    availableSlot: { startTime: "", endTime: "" }, // Fourchette proposée
-    targetAgentId: "", // Identifiant de l'agent cible
+    timeSlot: { startTime: "", endTime: "" },
+    requestType: "Replacement",
+    availableSlot: { startTime: "", endTime: "" },
+    targetAgentId: "",
   });
+
+  const [loading, setLoading] = useState(false); // État pour gérer le chargement
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,60 +31,65 @@ const NewRequestForm = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return; // Évite la double soumission
+    setLoading(true);
+
     const { timeSlot, availableSlot } = formData;
-  
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Supprime l'heure pour comparer uniquement les jours
-  
-    // Validation 1 : Vérifier que toutes les dates sont remplies
-    if (!timeSlot.startTime || !timeSlot.endTime || !availableSlot.startTime || !availableSlot.endTime) {
+    today.setHours(0, 0, 0, 0);
+
+    // ✅ Validations
+    if (!timeSlot.startTime || !timeSlot.endTime) {
       alert("Veuillez remplir toutes les dates avant d'envoyer la demande.");
+      setLoading(false);
       return;
     }
-  
-    // Validation 2 : Vérifier que les dates de chaque plage sont logiques
+
     if (new Date(timeSlot.startTime) >= new Date(timeSlot.endTime)) {
-      alert("La date de début de la plage demandée doit être avant la date de fin.");
+      alert("La date de début doit être avant la date de fin.");
+      setLoading(false);
       return;
     }
-    if (new Date(availableSlot.startTime) >= new Date(availableSlot.endTime)) {
-      alert("La date de début de la fourchette doit être avant la date de fin.");
-      return;
-    }
-  
-    // Validation 3 : Vérifier que les dates sont dans le futur
-    if (
-      new Date(timeSlot.startTime) < today ||
-      new Date(timeSlot.endTime) < today ||
-      new Date(availableSlot.startTime) < today ||
-      new Date(availableSlot.endTime) < today
-    ) {
+
+    if (new Date(timeSlot.startTime) < today || new Date(timeSlot.endTime) < today) {
       alert("Les dates doivent être dans le futur.");
+      setLoading(false);
       return;
     }
-  
-    // Validation 4 : Vérifier que la plage demandée est incluse dans la fourchette disponible
-    if (
-      new Date(timeSlot.startTime) < new Date(availableSlot.startTime) ||
-      new Date(timeSlot.endTime) > new Date(availableSlot.endTime)
-    ) {
-      alert("La plage demandée doit être incluse dans la fourchette proposée.");
-      return;
+
+    try {
+      // **Envoi de la requête POST au backend**
+      const response = await axios.post("http://localhost:3000/api/requests", formData, {
+        withCredentials: true, // Envoi des cookies si nécessaire
+        headers: { "Content-Type": "application/json" },
+      });
+
+      alert("✅ Demande envoyée avec succès !");
+      console.log("Réponse du serveur :", response.data);
+
+      // **Réinitialisation du formulaire**
+      setFormData({
+        requesterId: "",
+        timeSlot: { startTime: "", endTime: "" },
+        requestType: "Replacement",
+        availableSlot: { startTime: "", endTime: "" },
+        targetAgentId: "",
+      });
+    } catch (error) {
+      console.error("Erreur lors de l'envoi de la demande :", error);
+      alert("❌ Échec de l'envoi. Vérifiez les informations et réessayez.");
     }
-  
-    // Si tout est valide, afficher les données
-    console.log("Formulaire valide :", formData);
+
+    setLoading(false);
   };
-  
-  
 
   return (
     <form onSubmit={handleSubmit}>
       <h2>Créer une demande</h2>
 
-      {/* Champ requesterId */}
+      {/* Identifiant du demandeur */}
       <label>
         Identifiant du demandeur :
         <input
@@ -90,6 +98,7 @@ const NewRequestForm = () => {
           value={formData.requesterId}
           onChange={handleChange}
           placeholder="Entrez l'identifiant"
+          required
         />
       </label>
       <hr />
@@ -97,30 +106,31 @@ const NewRequestForm = () => {
       {/* Plage demandée */}
       <h3>Plage à remplacer</h3>
       <label>
-        Début de la plage :
+        Début :
         <input
           type="datetime-local"
           name="timeSlot.startTime"
           value={formData.timeSlot.startTime}
           onChange={handleChange}
+          required
         />
       </label>
-      <br />
       <label>
-        Fin de la plage :
+        Fin :
         <input
           type="datetime-local"
           name="timeSlot.endTime"
           value={formData.timeSlot.endTime}
           onChange={handleChange}
+          required
         />
       </label>
       <hr />
 
       {/* Fourchette proposée */}
-      <h3>Fourchette proposée pour l'échange</h3>
+      <h3>Fourchette proposée</h3>
       <label>
-        Début de la fourchette :
+        Début :
         <input
           type="datetime-local"
           name="availableSlot.startTime"
@@ -128,9 +138,8 @@ const NewRequestForm = () => {
           onChange={handleChange}
         />
       </label>
-      <br />
       <label>
-        Fin de la fourchette :
+        Fin :
         <input
           type="datetime-local"
           name="availableSlot.endTime"
@@ -139,40 +148,37 @@ const NewRequestForm = () => {
         />
       </label>
       <hr />
-      <br />
 
       {/* Type de demande */}
       <label>
         Type de demande :
-        <select
-          name="requestType"
-          value={formData.requestType}
-          onChange={handleChange}
-        >
+        <select name="requestType" value={formData.requestType} onChange={handleChange}>
           <option value="Replacement">Remplacement</option>
           <option value="Swap">Échange</option>
         </select>
       </label>
       <hr />
 
-      {/* Champ targetAgentId */}
+      {/* Agent cible */}
       <label>
         Identifiant de l'agent cible (optionnel) :
         <input
           type="text"
           name="targetAgentId"
           value={formData.targetAgentId}
-          onChange={(e) => setFormData({ ...formData, targetAgentId: e.target.value })}
-          placeholder="Entrez l'identifiant de l'agent cible"
+          onChange={handleChange}
+          placeholder="Agent cible (optionnel)"
         />
       </label>
       <br />
-      <br />
 
       {/* Bouton de soumission */}
-      <button type="submit">Envoyer la demande</button>
+      <button type="submit" disabled={loading}>
+        {loading ? "Envoi en cours..." : "Envoyer la demande"}
+      </button>
     </form>
   );
 };
 
 export default NewRequestForm;
+
