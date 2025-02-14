@@ -1,13 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import AgentSelector from "./AgentSelector";
+import { useAgent } from "../context/AgentContext";
 
 const NewRequestForm = () => {
+  // Accéder à l'agent connecté via useAgent
+  const { agent, loading } = useAgent();
+
   const [formData, setFormData] = useState({
-    requesterId: "",
     timeSlot: { startTime: "", endTime: "" }, // Plage pour la demande de remplacement
     requestType: "Replacement", // Valeur par défaut
     availableSlot: { startTime: "", endTime: "" }, // Fourchette proposée
-    targetAgentId: "", // Identifiant de l'agent cible
   });
+
+  useEffect(() => {
+    if (agent && agent._id) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        requesterId: agent._id, // Injecter automatiquement l'ID de l'agent connecté
+      }));
+    }
+  }, [agent]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,20 +40,28 @@ const NewRequestForm = () => {
     }
   };
 
+  const handleAgentSelect = (selectedAgent) => {
+    if (selectedAgent) {
+      setFormData({ ...formData, targetAgentId: selectedAgent });
+    } else {
+      const updatedFormData = { ...formData };
+      delete updatedFormData.targetAgentId; // Supprime le champ si Public
+      setFormData(updatedFormData);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    const { timeSlot, availableSlot } = formData;
-  
+
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Supprime l'heure pour comparer uniquement les jours
-  
-    // Validation 1 : Vérifier que toutes les dates sont remplies
+    today.setHours(0, 0, 0, 0); // Réinitialise l'heure pour ne comparer que les jours
+
+    const { timeSlot, availableSlot } = formData;
     if (!timeSlot.startTime || !timeSlot.endTime || !availableSlot.startTime || !availableSlot.endTime) {
       alert("Veuillez remplir toutes les dates avant d'envoyer la demande.");
       return;
     }
-  
-    // Validation 2 : Vérifier que les dates de chaque plage sont logiques
+
     if (new Date(timeSlot.startTime) >= new Date(timeSlot.endTime)) {
       alert("La date de début de la plage demandée doit être avant la date de fin.");
       return;
@@ -50,8 +70,7 @@ const NewRequestForm = () => {
       alert("La date de début de la fourchette doit être avant la date de fin.");
       return;
     }
-  
-    // Validation 3 : Vérifier que les dates sont dans le futur
+
     if (
       new Date(timeSlot.startTime) < today ||
       new Date(timeSlot.endTime) < today ||
@@ -61,8 +80,7 @@ const NewRequestForm = () => {
       alert("Les dates doivent être dans le futur.");
       return;
     }
-  
-    // Validation 4 : Vérifier que la plage demandée est incluse dans la fourchette disponible
+
     if (
       new Date(timeSlot.startTime) < new Date(availableSlot.startTime) ||
       new Date(timeSlot.endTime) > new Date(availableSlot.endTime)
@@ -70,31 +88,14 @@ const NewRequestForm = () => {
       alert("La plage demandée doit être incluse dans la fourchette proposée.");
       return;
     }
-  
-    // Si tout est valide, afficher les données
+
     console.log("Formulaire valide :", formData);
   };
-  
-  
 
   return (
     <form onSubmit={handleSubmit}>
       <h2>Créer une demande</h2>
 
-      {/* Champ requesterId */}
-      <label>
-        Identifiant du demandeur :
-        <input
-          type="text"
-          name="requesterId"
-          value={formData.requesterId}
-          onChange={handleChange}
-          placeholder="Entrez l'identifiant"
-        />
-      </label>
-      <hr />
-
-      {/* Plage demandée */}
       <h3>Plage à remplacer</h3>
       <label>
         Début de la plage :
@@ -117,7 +118,6 @@ const NewRequestForm = () => {
       </label>
       <hr />
 
-      {/* Fourchette proposée */}
       <h3>Fourchette proposée pour l'échange</h3>
       <label>
         Début de la fourchette :
@@ -141,7 +141,6 @@ const NewRequestForm = () => {
       <hr />
       <br />
 
-      {/* Type de demande */}
       <label>
         Type de demande :
         <select
@@ -155,21 +154,11 @@ const NewRequestForm = () => {
       </label>
       <hr />
 
-      {/* Champ targetAgentId */}
-      <label>
-        Identifiant de l'agent cible (optionnel) :
-        <input
-          type="text"
-          name="targetAgentId"
-          value={formData.targetAgentId}
-          onChange={(e) => setFormData({ ...formData, targetAgentId: e.target.value })}
-          placeholder="Entrez l'identifiant de l'agent cible"
-        />
-      </label>
+      <h3>Choisir un destinataire :</h3>
+      <AgentSelector onSelectAgent={handleAgentSelect} />
       <br />
       <br />
 
-      {/* Bouton de soumission */}
       <button type="submit">Envoyer la demande</button>
     </form>
   );
