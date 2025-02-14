@@ -50,3 +50,7 @@
     color: #555;
     margin: 5px 0;
 }
+
+li {
+    list-style: none;
+}
