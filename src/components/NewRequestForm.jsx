@@ -57,7 +57,12 @@ const NewRequestForm = () => {
     today.setHours(0, 0, 0, 0); // Réinitialise l'heure pour ne comparer que les jours
 
     const { timeSlot, availableSlot } = formData;
-    if (!timeSlot.startTime || !timeSlot.endTime || !availableSlot.startTime || !availableSlot.endTime) {
+    if (
+      !timeSlot.startTime ||
+      !timeSlot.endTime ||
+      !availableSlot.startTime ||
+      !availableSlot.endTime
+    ) {
       alert("Veuillez remplir toutes les dates avant d'envoyer la demande.");
       setLoading(false);
       return;
@@ -141,7 +146,11 @@ const NewRequestForm = () => {
 
       <label>
         Type de demande :
-        <select name="requestType" value={formData.requestType} onChange={handleChange}>
+        <select
+          name="requestType"
+          value={formData.requestType}
+          onChange={handleChange}
+        >
           <option value="Replacement">Remplacement</option>
           <option value="Swap">Échange</option>
         </select>
