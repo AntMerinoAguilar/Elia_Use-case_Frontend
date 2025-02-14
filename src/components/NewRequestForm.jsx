@@ -1,16 +1,25 @@
-import React, { useState } from "react";
-import axios from "axios"; // Import pour gérer les requêtes HTTP
+import React, { useState, useEffect } from "react";
+import AgentSelector from "./AgentSelector";
+import { useAgent } from "../context/AgentContext";
 
 const NewRequestForm = () => {
+  // Accéder à l'agent connecté via useAgent
+  const { agent, loading } = useAgent();
+
   const [formData, setFormData] = useState({
-    requesterId: "",
-    timeSlot: { startTime: "", endTime: "" },
-    requestType: "Replacement",
-    availableSlot: { startTime: "", endTime: "" },
-    targetAgentId: "",
+    timeSlot: { startTime: "", endTime: "" }, // Plage pour la demande de remplacement
+    requestType: "Replacement", // Valeur par défaut
+    availableSlot: { startTime: "", endTime: "" }, // Fourchette proposée
   });
 
-  const [loading, setLoading] = useState(false); // État pour gérer le chargement
+  useEffect(() => {
+    if (agent && agent._id) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        requesterId: agent._id, // Injecter automatiquement l'ID de l'agent connecté
+      }));
+    }
+  }, [agent]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,17 +40,24 @@ const NewRequestForm = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleAgentSelect = (selectedAgent) => {
+    if (selectedAgent) {
+      setFormData({ ...formData, targetAgentId: selectedAgent });
+    } else {
+      const updatedFormData = { ...formData };
+      delete updatedFormData.targetAgentId; // Supprime le champ si Public
+      setFormData(updatedFormData);
+    }
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (loading) return; // Évite la double soumission
-    setLoading(true);
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Réinitialise l'heure pour ne comparer que les jours
 
     const { timeSlot, availableSlot } = formData;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    // ✅ Validations
-    if (!timeSlot.startTime || !timeSlot.endTime) {
+    if (!timeSlot.startTime || !timeSlot.endTime || !availableSlot.startTime || !availableSlot.endTime) {
       alert("Veuillez remplir toutes les dates avant d'envoyer la demande.");
       setLoading(false);
       return;
@@ -53,57 +69,32 @@ const NewRequestForm = () => {
       return;
     }
 
-    if (new Date(timeSlot.startTime) < today || new Date(timeSlot.endTime) < today) {
+    if (
+      new Date(timeSlot.startTime) < today ||
+      new Date(timeSlot.endTime) < today ||
+      new Date(availableSlot.startTime) < today ||
+      new Date(availableSlot.endTime) < today
+    ) {
       alert("Les dates doivent être dans le futur.");
       setLoading(false);
       return;
     }
 
-    try {
-      // **Envoi de la requête POST au backend**
-      const response = await axios.post("http://localhost:3000/api/requests", formData, {
-        withCredentials: true, // Envoi des cookies si nécessaire
-        headers: { "Content-Type": "application/json" },
-      });
-
-      alert("✅ Demande envoyée avec succès !");
-      console.log("Réponse du serveur :", response.data);
-
-      // **Réinitialisation du formulaire**
-      setFormData({
-        requesterId: "",
-        timeSlot: { startTime: "", endTime: "" },
-        requestType: "Replacement",
-        availableSlot: { startTime: "", endTime: "" },
-        targetAgentId: "",
-      });
-    } catch (error) {
-      console.error("Erreur lors de l'envoi de la demande :", error);
-      alert("❌ Échec de l'envoi. Vérifiez les informations et réessayez.");
+    if (
+      new Date(timeSlot.startTime) < new Date(availableSlot.startTime) ||
+      new Date(timeSlot.endTime) > new Date(availableSlot.endTime)
+    ) {
+      alert("La plage demandée doit être incluse dans la fourchette proposée.");
+      return;
     }
 
-    setLoading(false);
+    console.log("Formulaire valide :", formData);
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <h2>Créer une demande</h2>
 
-      {/* Identifiant du demandeur */}
-      <label>
-        Identifiant du demandeur :
-        <input
-          type="text"
-          name="requesterId"
-          value={formData.requesterId}
-          onChange={handleChange}
-          placeholder="Entrez l'identifiant"
-          required
-        />
-      </label>
-      <hr />
-
-      {/* Plage demandée */}
       <h3>Plage à remplacer</h3>
       <label>
         Début :
@@ -127,8 +118,7 @@ const NewRequestForm = () => {
       </label>
       <hr />
 
-      {/* Fourchette proposée */}
-      <h3>Fourchette proposée</h3>
+      <h3>Fourchette proposée pour l'échange</h3>
       <label>
         Début :
         <input
@@ -149,7 +139,6 @@ const NewRequestForm = () => {
       </label>
       <hr />
 
-      {/* Type de demande */}
       <label>
         Type de demande :
         <select name="requestType" value={formData.requestType} onChange={handleChange}>
@@ -159,23 +148,11 @@ const NewRequestForm = () => {
       </label>
       <hr />
 
-      {/* Agent cible */}
-      <label>
-        Identifiant de l'agent cible (optionnel) :
-        <input
-          type="text"
-          name="targetAgentId"
-          value={formData.targetAgentId}
-          onChange={handleChange}
-          placeholder="Agent cible (optionnel)"
-        />
-      </label>
+      <h3>Choisir un destinataire :</h3>
+      <AgentSelector onSelectAgent={handleAgentSelect} />
       <br />
 
-      {/* Bouton de soumission */}
-      <button type="submit" disabled={loading}>
-        {loading ? "Envoi en cours..." : "Envoyer la demande"}
-      </button>
+      <button type="submit">Envoyer la demande</button>
     </form>
   );
 };
