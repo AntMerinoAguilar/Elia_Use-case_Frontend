@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
+import axios from 'axios';
 import AgentSelector from "./AgentSelector";
+import ShiftSelector from "./ShiftSelector";
 import { useAgent } from "../context/AgentContext";
 
 const NewRequestForm = () => {
@@ -21,6 +23,16 @@ const NewRequestForm = () => {
     }
   }, [agent]);
 
+  const handleShiftSelect = (selectedShift) => {
+    if (selectedShift) {
+      setFormData({ ...formData, shiftId: selectedShift });
+    } else {
+      const updatedFormData = { ...formData };
+      delete updatedFormData.shiftId;
+      setFormData(updatedFormData);
+    }
+  };
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name.includes("timeSlot")) {
@@ -50,13 +62,15 @@ const NewRequestForm = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Réinitialise l'heure pour ne comparer que les jours
-
+  
     const { timeSlot, availableSlot } = formData;
+  
+    // ✅ Validation 1 : Vérifier que toutes les dates sont remplies
     if (
       !timeSlot.startTime ||
       !timeSlot.endTime ||
@@ -64,41 +78,66 @@ const NewRequestForm = () => {
       !availableSlot.endTime
     ) {
       alert("Veuillez remplir toutes les dates avant d'envoyer la demande.");
-      setLoading(false);
       return;
     }
-
+  
+    // ✅ Validation 2 : Vérifier que les dates de début précèdent les dates de fin
     if (new Date(timeSlot.startTime) >= new Date(timeSlot.endTime)) {
-      alert("La date de début doit être avant la date de fin.");
-      setLoading(false);
+      alert("La date de début de la plage à remplacer doit être avant la date de fin.");
       return;
     }
-
+    if (new Date(availableSlot.startTime) >= new Date(availableSlot.endTime)) {
+      alert("La date de début de la fourchette doit être avant la date de fin.");
+      return;
+    }
+  
+    // ✅ Validation 3 : Vérifier que toutes les dates sont dans le futur
     if (
       new Date(timeSlot.startTime) < today ||
       new Date(timeSlot.endTime) < today ||
       new Date(availableSlot.startTime) < today ||
       new Date(availableSlot.endTime) < today
     ) {
-      alert("Les dates doivent être dans le futur.");
-      setLoading(false);
+      alert("Toutes les dates doivent être dans le futur.");
       return;
     }
-
-    if (
-      new Date(timeSlot.startTime) < new Date(availableSlot.startTime) ||
-      new Date(timeSlot.endTime) > new Date(availableSlot.endTime)
-    ) {
-      alert("La plage demandée doit être incluse dans la fourchette proposée.");
-      return;
+  
+    // ✅ Envoi des données au backend
+    try {
+      const response = await axios.post("http://localhost:3000/api/requests", formData, {
+        withCredentials: true, // Envoi des cookies pour l'authentification
+      });
+  
+      // ✅ Succès
+      alert("Demande envoyée avec succès !");
+      console.log("Réponse du backend :", response.data);
+  
+      // ✅ Réinitialisation du formulaire
+      setFormData({
+        requesterId: "", // Automatiquement injecté par le contexte
+        shiftId: "",
+        timeSlot: { startTime: "", endTime: "" },
+        requestType: "Replacement",
+        availableSlot: { startTime: "", endTime: "" },
+        targetAgentId: undefined,
+      });
+    } catch (error) {
+      // ❌ Gestion des erreurs
+      console.error("Erreur lors de l'envoi de la demande :", error);
+      alert("Erreur lors de l'envoi. Veuillez réessayer.");
     }
-
-    console.log("Formulaire valide :", formData);
   };
+  
+  
+  
 
   return (
     <form onSubmit={handleSubmit}>
       <h2>Créer une demande</h2>
+
+      <label htmlFor="shiftId">Choisir un shift :</label>
+      <ShiftSelector onSelectShift={handleShiftSelect} />
+      <hr />
 
       <h3>Plage à remplacer</h3>
       <label>
@@ -111,6 +150,7 @@ const NewRequestForm = () => {
           required
         />
       </label>
+      <br />
       <label>
         Fin :
         <input
@@ -133,6 +173,7 @@ const NewRequestForm = () => {
           onChange={handleChange}
         />
       </label>
+      <br />
       <label>
         Fin :
         <input
@@ -143,6 +184,7 @@ const NewRequestForm = () => {
         />
       </label>
       <hr />
+      <br />
 
       <label>
         Type de demande :
