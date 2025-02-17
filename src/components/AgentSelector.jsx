@@ -52,7 +52,7 @@ const AgentSelector = ({ onSelectAgent }) => {
   }
 
   return (
-    <select value={selectedAgent} onChange={handleChange}>
+    <select id="agentId" value={selectedAgent} onChange={handleChange}>
       <option value="">Public (tous les agents)</option>
       {agents.map((agent) => (
         <option key={agent._id} value={agent._id}>
