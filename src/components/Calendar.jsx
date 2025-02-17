@@ -72,7 +72,7 @@ const MyCalendar = () => {
 
   return (
     <div style={{ height: 700 }}>
-      <h2>Calendrier</h2>
+      {/* <h2>Calendrier</h2> */}
       <Calendar
         localizer={localizer}
         events={events}

@@ -26,17 +26,17 @@ h2 {
 }
 
 .notification-item.unread {
-    background: #f9f9f9;
+    background: #fd8625ce;
     font-weight: bold;
 }
 
 .notification-item.read {
-    background: #e0e0e0;
+    background: #fa9e49;
     font-weight: normal;
 }
 
 .notification-item:hover {
-    background: #dcdcdc;
+    background: #ff8e25;
 }
 
 .notification-link {

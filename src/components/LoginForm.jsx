@@ -1,12 +1,18 @@
 import React from "react";
+import logo from '../assets/logo Elia.png'
+import '../styles/LoginForm.css';
 
 const LoginForm = ({ username, password, onUsernameChange, onPasswordChange, onSubmit }) => {
   return (
-    <form onSubmit={onSubmit}>
-      <h2>Form</h2>
+    <form 
+    className="login-form"
+    onSubmit={onSubmit}>
+      <img src={logo} alt="logo Elia" className="logo" />
+      <div className="inputs">
       <input
         type="text"
         placeholder="Nom d'utilisateur"
+        className="username-input"
         value={username}
         onChange={onUsernameChange}
         required
@@ -14,11 +20,13 @@ const LoginForm = ({ username, password, onUsernameChange, onPasswordChange, onS
       <input
         type="password"
         placeholder="Mot de passe"
+        className="password-input"
         value={password}
         onChange={onPasswordChange}
         required
       />
-      <button type="submit">Se connecter</button>
+      </div>
+      <button type="submit" className="login-btn">Se connecter</button>
     </form>
   );
 };

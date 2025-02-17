@@ -5,12 +5,11 @@ import AddButton from "../components/AddButton";
 
 const HomePage = () => {
   return (
-    <>
+    <div className="container">
       <Navigation />
-      <h1>Home Page</h1>
       <MyCalendar />
       <AddButton />
-    </>
+    </div>
   );
 };
 

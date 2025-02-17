@@ -4,11 +4,11 @@ import NewRequestForm from "../components/NewRequestForm";
 
 const NewRequestPage = () => {
   return (
-    <>
+    <div className="container">
       <Navigation />
       <h1>New Request Page</h1>
       <NewRequestForm />
-    </>
+    </div>
   );
 };
 
