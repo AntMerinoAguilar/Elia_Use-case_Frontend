@@ -1,12 +1,12 @@
 import React from "react";
 import Navigation from "../components/Navigation";
+import Exchange from "../components/Exchange";
 
 const ExchangePage = () => {
   return (
     <>
       <Navigation />
-      <h1>Exchange Page</h1>
-      <p>Bienvenue sur la page des échanges d'horaires.</p>
+      <Exchange />
     </>
   );
 };
