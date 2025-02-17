@@ -9,11 +9,12 @@ const NewRequestForm = () => {
 
   const [formData, setFormData] = useState({
     timeSlot: { startTime: "", endTime: "" },
-    requestType: "Replacement",
+    requestType: "Replacement", // Par défaut, c'est Replacement
     availableSlots: [], // 🔄 Initialisation avec un tableau vide
+    isUrgent: false, // 🔹 Ajout de la gestion de l'urgence
   });
 
-  const [errors, setErrors] = useState({}); // 🔹 Gestion des erreurs
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (agent && agent._id) {
@@ -25,15 +26,23 @@ const NewRequestForm = () => {
   }, [agent]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
 
     if (name === "requestType") {
-      setFormData({ ...formData, requestType: value });
+      const isReplacement = value === "Replacement";
 
-      // 🔄 Réinitialiser availableSlots si on repasse à Replacement
-      if (value === "Replacement") {
-        setFormData((prevFormData) => ({ ...prevFormData, availableSlots: [] }));
-      }
+      setFormData((prev) => ({
+        ...prev,
+        requestType: isReplacement && prev.isUrgent ? "Urgent Replacement" : value,
+        isUrgent: isReplacement ? prev.isUrgent : false, // Réinitialiser "Urgent" si on passe à "Swap"
+        availableSlots: isReplacement ? [] : prev.availableSlots, // Supprimer availableSlots si on revient à Replacement
+      }));
+    } else if (name === "isUrgent") {
+      setFormData((prev) => ({
+        ...prev,
+        isUrgent: checked,
+        requestType: checked ? "Urgent Replacement" : "Replacement", // 🔄 Change requestType en fonction de la case cochée
+      }));
     } else if (name.includes("timeSlot")) {
       const key = name.split(".")[1];
       setFormData({
@@ -63,6 +72,8 @@ const NewRequestForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    console.log("📩 Données du formulaire envoyées :", formData); // ✅ Console log global
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -115,6 +126,7 @@ const NewRequestForm = () => {
         requestType: "Replacement",
         availableSlots: [],
         targetAgentId: undefined,
+        isUrgent: false, // Réinitialisation de la case Urgent
       });
 
       setErrors({});
@@ -139,49 +151,37 @@ const NewRequestForm = () => {
         <option value="Replacement">Remplacement</option>
         <option value="Swap">Échange</option>
       </select>
+
+      {formData.requestType === "Replacement" || formData.requestType === "Urgent Replacement" ? (
+        <div>
+          <input
+            type="checkbox"
+            id="isUrgent"
+            name="isUrgent"
+            checked={formData.isUrgent}
+            onChange={handleChange}
+          />
+          <label htmlFor="isUrgent">Urgent</label>
+        </div>
+      ) : null}
       <hr />
 
       <h3>Absence</h3>
       <label>Début :</label>
-      <input
-        type="datetime-local"
-        name="timeSlot.startTime"
-        value={formData.timeSlot.startTime}
-        onChange={handleChange}
-        required
-      />
-      {errors.timeSlot && <p className="error">{errors.timeSlot}</p>}
+      <input type="datetime-local" name="timeSlot.startTime" value={formData.timeSlot.startTime} onChange={handleChange} required />
       <br />
       <label>Fin :</label>
-      <input
-        type="datetime-local"
-        name="timeSlot.endTime"
-        value={formData.timeSlot.endTime}
-        onChange={handleChange}
-        required
-      />
+      <input type="datetime-local" name="timeSlot.endTime" value={formData.timeSlot.endTime} onChange={handleChange} required />
       <hr />
 
-      {/* 🔄 Section cachée si "Replacement" est sélectionné */}
       {formData.requestType === "Swap" && (
         <>
-          <h3>Disponibilité</h3>
+          <h3>Disponibilités</h3>
           <label>Début :</label>
-          <input
-            type="datetime-local"
-            name="availableSlots.startTime"
-            value={formData.availableSlots.length > 0 ? formData.availableSlots[0].startTime : ""}
-            onChange={handleChange}
-          />
-          {errors.availableSlots && <p className="error">{errors.availableSlots}</p>}
+          <input type="datetime-local" name="availableSlots.startTime" value={formData.availableSlots[0]?.startTime || ""} onChange={handleChange} />
           <br />
           <label>Fin :</label>
-          <input
-            type="datetime-local"
-            name="availableSlots.endTime"
-            value={formData.availableSlots.length > 0 ? formData.availableSlots[0].endTime : ""}
-            onChange={handleChange}
-          />
+          <input type="datetime-local" name="availableSlots.endTime" value={formData.availableSlots[0]?.endTime || ""} onChange={handleChange} />
           <hr />
         </>
       )}
@@ -189,10 +189,10 @@ const NewRequestForm = () => {
       <h3>Destinataire</h3>
       <label htmlFor="agentId">Choisir un destinataire :</label>
       <AgentSelector onSelectAgent={(id) => setFormData({ ...formData, targetAgentId: id })} />
-      <br />
-      <br />
+      <br /><br />
 
       {errors.submit && <p className="error">{errors.submit}</p>}
+
       <button type="submit">Envoyer la demande</button>
     </form>
   );
