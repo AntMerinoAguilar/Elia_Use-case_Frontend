@@ -4,6 +4,7 @@ import AgentSelector from "./AgentSelector";
 import ShiftSelector from "./ShiftSelector";
 import { useAgent } from "../context/AgentContext";
 
+
 const NewRequestForm = () => {
   const { agent } = useAgent();
 
@@ -14,7 +15,9 @@ const NewRequestForm = () => {
     isUrgent: false, // 🔹 Ajout de la gestion de l'urgence
   });
 
+  const [dateLimits, setDateLimits] = useState({ min: "", max: "" });
   const [errors, setErrors] = useState({});
+
 
   useEffect(() => {
     if (agent && agent._id) {
@@ -24,6 +27,7 @@ const NewRequestForm = () => {
       }));
     }
   }, [agent]);
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -53,27 +57,27 @@ const NewRequestForm = () => {
       const key = name.split(".")[1];
 
       setFormData((prevFormData) => {
-        const updatedSlots = [...prevFormData.availableSlots];
-
-        if (updatedSlots.length === 0) {
-          updatedSlots.push({ startTime: "", endTime: "" });
-        }
+        const updatedSlots = prevFormData.availableSlots.length > 0
+          ? [...prevFormData.availableSlots]
+          : [{ startTime: "", endTime: "" }]; // Ajout sécurisé
 
         updatedSlots[0] = { ...updatedSlots[0], [key]: value };
 
         return { ...prevFormData, availableSlots: updatedSlots };
       });
     } else {
-      setFormData({ ...formData, [name]: value });
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     }
 
-    setErrors({ ...errors, [name]: "" });
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    console.log("📩 Données du formulaire envoyées :", formData); // ✅ Console log global
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -107,12 +111,9 @@ const NewRequestForm = () => {
     }
 
     try {
-      const requestData = {
-        ...formData,
-        availableSlots: formData.requestType === "Swap" && formData.availableSlots.length > 0
-          ? formData.availableSlots
-          : undefined, // 🔄 Supprimer availableSlots s'il est vide pour un remplacement
-      };
+      const { isUrgent, ...requestData } = formData;
+
+      console.log("📤 Données envoyées à l'API :", requestData);
 
       const response = await axios.post("http://localhost:3000/api/requests", requestData, {
         withCredentials: true,
@@ -142,7 +143,25 @@ const NewRequestForm = () => {
 
       <h3>Shift</h3>
       <label htmlFor="shiftId">Choisir un shift :</label>
-      <ShiftSelector onSelectShift={(id) => setFormData({ ...formData, shiftId: id })} />
+      <ShiftSelector 
+        onSelectShift={(shift) => {
+          const formatDateForInput = (isoString) => {
+            if (!isoString) return "";
+            const date = new Date(isoString);
+            return date.toISOString().slice(0, 16); // Format requis: yyyy-MM-ddTHH:mm
+          };
+
+          setDateLimits({
+            min: formatDateForInput(shift.startTime),
+            max: formatDateForInput(shift.endTime),
+          });
+
+          setFormData(prev => ({
+            ...prev,
+            shiftId: shift.id,
+          }));
+        }} 
+      />
       <hr />
 
       <h3>Type de demande</h3>
@@ -168,11 +187,26 @@ const NewRequestForm = () => {
 
       <h3>Absence</h3>
       <label>Début :</label>
-      <input type="datetime-local" name="timeSlot.startTime" value={formData.timeSlot.startTime} onChange={handleChange} required />
+      <input 
+        type="datetime-local" 
+        name="timeSlot.startTime" 
+        value={formData.timeSlot.startTime} 
+        onChange={handleChange} 
+        min={dateLimits.min} 
+        max={dateLimits.max} 
+        required 
+      />
       <br />
       <label>Fin :</label>
-      <input type="datetime-local" name="timeSlot.endTime" value={formData.timeSlot.endTime} onChange={handleChange} required />
-      <hr />
+      <input 
+        type="datetime-local" 
+        name="timeSlot.endTime" 
+        value={formData.timeSlot.endTime} 
+        onChange={handleChange} 
+        min={dateLimits.min} 
+        max={dateLimits.max} 
+        required 
+      /><hr />
 
       {formData.requestType === "Swap" && (
         <>

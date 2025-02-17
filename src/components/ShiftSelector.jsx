@@ -11,12 +11,12 @@ const ShiftSelector = ({ onSelectShift }) => {
         const response = await axios.get("http://localhost:3000/api/shifts/me", {
           withCredentials: true,
         });
-  
-        // Trier les shifts par startDate (plus proche en premier)
+
+        // Trier les shifts par date de début
         const sortedShifts = response.data.sort((a, b) =>
           new Date(a.startDate) - new Date(b.startDate)
         );
-  
+
         setShifts(sortedShifts);
       } catch (error) {
         console.error("Erreur lors de la récupération des shifts :", error);
@@ -24,13 +24,43 @@ const ShiftSelector = ({ onSelectShift }) => {
         setLoading(false);
       }
     };
-  
+
     fetchShifts();
   }, []);
 
+  // Fonction pour convertir une date UTC en format local lisible
+  const formatDateForDisplay = (isoString) => {
+    if (!isoString) return "";
+    const date = new Date(isoString);
+  
+    const formattedDate = date.toLocaleDateString("fr-FR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+  
+    /* const formattedTime = date.toLocaleTimeString("fr-FR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: undefined, // 🔹 Assure l'exclusion des secondes
+      hour12: false, // 🔹 Format 24h
+    }); */
+  
+    return `${formattedDate} `; // ${formattedTime}
+  };
+
   const handleChange = (e) => {
-    const selectedValue = e.target.value === "" ? undefined : e.target.value;
-    onSelectShift(selectedValue); // Transmet au parent
+    const selectedShift = shifts.find(shift => shift._id === e.target.value);
+
+    if (selectedShift) {
+      onSelectShift({
+        id: selectedShift._id,
+        startTime: selectedShift.startDate,
+        endTime: selectedShift.endDate,
+      });
+    } else {
+      onSelectShift(null);
+    }
   };
 
   if (loading) {
@@ -42,7 +72,7 @@ const ShiftSelector = ({ onSelectShift }) => {
       <option value="">Sélectionnez un shift</option>
       {shifts.map((shift) => (
         <option key={shift._id} value={shift._id}>
-          {new Date(shift.startDate).toLocaleString()} - {new Date(shift.endDate).toLocaleString()}
+          {formatDateForDisplay(shift.startDate)} - {formatDateForDisplay(shift.endDate)}
         </option>
       ))}
     </select>
