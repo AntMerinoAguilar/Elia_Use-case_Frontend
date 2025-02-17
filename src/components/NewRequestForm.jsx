@@ -5,204 +5,194 @@ import ShiftSelector from "./ShiftSelector";
 import { useAgent } from "../context/AgentContext";
 
 const NewRequestForm = () => {
-  // Accéder à l'agent connecté via useAgent
-  const { agent, loading } = useAgent();
+  const { agent } = useAgent();
 
   const [formData, setFormData] = useState({
-    timeSlot: { startTime: "", endTime: "" }, // Plage pour la demande de remplacement
-    requestType: "Replacement", // Valeur par défaut
-    availableSlot: { startTime: "", endTime: "" }, // Fourchette proposée
+    timeSlot: { startTime: "", endTime: "" },
+    requestType: "Replacement",
+    availableSlots: [], // 🔄 Initialisation avec un tableau vide
   });
+
+  const [errors, setErrors] = useState({}); // 🔹 Gestion des erreurs
 
   useEffect(() => {
     if (agent && agent._id) {
       setFormData((prevFormData) => ({
         ...prevFormData,
-        requesterId: agent._id, // Injecter automatiquement l'ID de l'agent connecté
+        requesterId: agent._id,
       }));
     }
   }, [agent]);
 
-  const handleShiftSelect = (selectedShift) => {
-    if (selectedShift) {
-      setFormData({ ...formData, shiftId: selectedShift });
-    } else {
-      const updatedFormData = { ...formData };
-      delete updatedFormData.shiftId;
-      setFormData(updatedFormData);
-    }
-  };
-  
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name.includes("timeSlot")) {
+
+    if (name === "requestType") {
+      setFormData({ ...formData, requestType: value });
+
+      // 🔄 Réinitialiser availableSlots si on repasse à Replacement
+      if (value === "Replacement") {
+        setFormData((prevFormData) => ({ ...prevFormData, availableSlots: [] }));
+      }
+    } else if (name.includes("timeSlot")) {
       const key = name.split(".")[1];
       setFormData({
         ...formData,
         timeSlot: { ...formData.timeSlot, [key]: value },
       });
-    } else if (name.includes("availableSlot")) {
+    } else if (name.includes("availableSlots")) {
       const key = name.split(".")[1];
-      setFormData({
-        ...formData,
-        availableSlot: { ...formData.availableSlot, [key]: value },
+
+      setFormData((prevFormData) => {
+        const updatedSlots = [...prevFormData.availableSlots];
+
+        if (updatedSlots.length === 0) {
+          updatedSlots.push({ startTime: "", endTime: "" });
+        }
+
+        updatedSlots[0] = { ...updatedSlots[0], [key]: value };
+
+        return { ...prevFormData, availableSlots: updatedSlots };
       });
     } else {
       setFormData({ ...formData, [name]: value });
     }
-  };
 
-  const handleAgentSelect = (selectedAgent) => {
-    if (selectedAgent) {
-      setFormData({ ...formData, targetAgentId: selectedAgent });
-    } else {
-      const updatedFormData = { ...formData };
-      delete updatedFormData.targetAgentId; // Supprime le champ si Public
-      setFormData(updatedFormData);
-    }
+    setErrors({ ...errors, [name]: "" });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Réinitialise l'heure pour ne comparer que les jours
-  
-    const { timeSlot, availableSlot } = formData;
-  
-    // ✅ Validation 1 : Vérifier que toutes les dates sont remplies
-    if (
-      !timeSlot.startTime ||
-      !timeSlot.endTime ||
-      !availableSlot.startTime ||
-      !availableSlot.endTime
-    ) {
-      alert("Veuillez remplir toutes les dates avant d'envoyer la demande.");
+    today.setHours(0, 0, 0, 0);
+
+    let newErrors = {};
+
+    if (!formData.timeSlot.startTime || !formData.timeSlot.endTime) {
+      newErrors.timeSlot = "Veuillez remplir toutes les dates de la plage à remplacer.";
+    }
+
+    if (formData.requestType === "Swap") {
+      if (!formData.availableSlots.length || !formData.availableSlots?.[0]?.startTime || !formData.availableSlots?.[0]?.endTime) {
+        newErrors.availableSlots = "Veuillez remplir la fourchette de disponibilité.";
+      }
+
+      if (new Date(formData.availableSlots[0].startTime) >= new Date(formData.availableSlots[0].endTime)) {
+        newErrors.availableSlots = "La date de début de la fourchette doit être avant la date de fin.";
+      }
+
+      if (
+        new Date(formData.availableSlots[0].startTime) < today ||
+        new Date(formData.availableSlots[0].endTime) < today
+      ) {
+        newErrors.date = "Toutes les dates doivent être dans le futur.";
+      }
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
-  
-    // ✅ Validation 2 : Vérifier que les dates de début précèdent les dates de fin
-    if (new Date(timeSlot.startTime) >= new Date(timeSlot.endTime)) {
-      alert("La date de début de la plage à remplacer doit être avant la date de fin.");
-      return;
-    }
-    if (new Date(availableSlot.startTime) >= new Date(availableSlot.endTime)) {
-      alert("La date de début de la fourchette doit être avant la date de fin.");
-      return;
-    }
-  
-    // ✅ Validation 3 : Vérifier que toutes les dates sont dans le futur
-    if (
-      new Date(timeSlot.startTime) < today ||
-      new Date(timeSlot.endTime) < today ||
-      new Date(availableSlot.startTime) < today ||
-      new Date(availableSlot.endTime) < today
-    ) {
-      alert("Toutes les dates doivent être dans le futur.");
-      return;
-    }
-  
-    // ✅ Envoi des données au backend
+
     try {
-      const response = await axios.post("http://localhost:3000/api/requests", formData, {
-        withCredentials: true, // Envoi des cookies pour l'authentification
+      const requestData = {
+        ...formData,
+        availableSlots: formData.requestType === "Swap" && formData.availableSlots.length > 0
+          ? formData.availableSlots
+          : undefined, // 🔄 Supprimer availableSlots s'il est vide pour un remplacement
+      };
+
+      const response = await axios.post("http://localhost:3000/api/requests", requestData, {
+        withCredentials: true,
       });
-  
-      // ✅ Succès
+
       alert("Demande envoyée avec succès !");
-      console.log("Réponse du backend :", response.data);
-  
-      // ✅ Réinitialisation du formulaire
       setFormData({
-        requesterId: "", // Automatiquement injecté par le contexte
+        requesterId: "",
         shiftId: "",
         timeSlot: { startTime: "", endTime: "" },
         requestType: "Replacement",
-        availableSlot: { startTime: "", endTime: "" },
+        availableSlots: [],
         targetAgentId: undefined,
       });
+
+      setErrors({});
     } catch (error) {
-      // ❌ Gestion des erreurs
       console.error("Erreur lors de l'envoi de la demande :", error);
-      alert("Erreur lors de l'envoi. Veuillez réessayer.");
+      setErrors({ submit: "Erreur lors de l'envoi. Veuillez réessayer." });
     }
   };
-  
-  
-  
 
   return (
     <form onSubmit={handleSubmit}>
       <h2>Créer une demande</h2>
 
+      <h3>Shift</h3>
       <label htmlFor="shiftId">Choisir un shift :</label>
-      <ShiftSelector onSelectShift={handleShiftSelect} />
+      <ShiftSelector onSelectShift={(id) => setFormData({ ...formData, shiftId: id })} />
       <hr />
 
-      <h3>Plage à remplacer</h3>
-      <label>
-        Début :
-        <input
-          type="datetime-local"
-          name="timeSlot.startTime"
-          value={formData.timeSlot.startTime}
-          onChange={handleChange}
-          required
-        />
-      </label>
-      <br />
-      <label>
-        Fin :
-        <input
-          type="datetime-local"
-          name="timeSlot.endTime"
-          value={formData.timeSlot.endTime}
-          onChange={handleChange}
-          required
-        />
-      </label>
+      <h3>Type de demande</h3>
+      <label>Choisir une demande :</label>
+      <select name="requestType" value={formData.requestType} onChange={handleChange}>
+        <option value="Replacement">Remplacement</option>
+        <option value="Swap">Échange</option>
+      </select>
       <hr />
 
-      <h3>Fourchette proposée pour l'échange</h3>
-      <label>
-        Début :
-        <input
-          type="datetime-local"
-          name="availableSlot.startTime"
-          value={formData.availableSlot.startTime}
-          onChange={handleChange}
-        />
-      </label>
+      <h3>Absence</h3>
+      <label>Début :</label>
+      <input
+        type="datetime-local"
+        name="timeSlot.startTime"
+        value={formData.timeSlot.startTime}
+        onChange={handleChange}
+        required
+      />
+      {errors.timeSlot && <p className="error">{errors.timeSlot}</p>}
       <br />
-      <label>
-        Fin :
-        <input
-          type="datetime-local"
-          name="availableSlot.endTime"
-          value={formData.availableSlot.endTime}
-          onChange={handleChange}
-        />
-      </label>
-      <hr />
-      <br />
-
-      <label>
-        Type de demande :
-        <select
-          name="requestType"
-          value={formData.requestType}
-          onChange={handleChange}
-        >
-          <option value="Replacement">Remplacement</option>
-          <option value="Swap">Échange</option>
-        </select>
-      </label>
+      <label>Fin :</label>
+      <input
+        type="datetime-local"
+        name="timeSlot.endTime"
+        value={formData.timeSlot.endTime}
+        onChange={handleChange}
+        required
+      />
       <hr />
 
-      <h3>Choisir un destinataire :</h3>
-      <AgentSelector onSelectAgent={handleAgentSelect} />
+      {/* 🔄 Section cachée si "Replacement" est sélectionné */}
+      {formData.requestType === "Swap" && (
+        <>
+          <h3>Disponibilité</h3>
+          <label>Début :</label>
+          <input
+            type="datetime-local"
+            name="availableSlots.startTime"
+            value={formData.availableSlots.length > 0 ? formData.availableSlots[0].startTime : ""}
+            onChange={handleChange}
+          />
+          {errors.availableSlots && <p className="error">{errors.availableSlots}</p>}
+          <br />
+          <label>Fin :</label>
+          <input
+            type="datetime-local"
+            name="availableSlots.endTime"
+            value={formData.availableSlots.length > 0 ? formData.availableSlots[0].endTime : ""}
+            onChange={handleChange}
+          />
+          <hr />
+        </>
+      )}
+
+      <h3>Destinataire</h3>
+      <label htmlFor="agentId">Choisir un destinataire :</label>
+      <AgentSelector onSelectAgent={(id) => setFormData({ ...formData, targetAgentId: id })} />
+      <br />
       <br />
 
+      {errors.submit && <p className="error">{errors.submit}</p>}
       <button type="submit">Envoyer la demande</button>
     </form>
   );

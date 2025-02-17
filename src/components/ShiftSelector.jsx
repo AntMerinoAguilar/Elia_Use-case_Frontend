@@ -38,7 +38,7 @@ const ShiftSelector = ({ onSelectShift }) => {
   }
 
   return (
-    <select onChange={handleChange}>
+    <select id="shiftId" onChange={handleChange}>
       <option value="">Sélectionnez un shift</option>
       {shifts.map((shift) => (
         <option key={shift._id} value={shift._id}>
