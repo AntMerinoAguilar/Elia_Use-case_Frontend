@@ -1,0 +1,24 @@
+.addbtn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    margin-top: 10px;
+    
+
+}
+
+.addbtn button {
+    background: #E75420;
+    width: 15%;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.addbtn button:hover {
+    background-color: #F0801A;
+}
