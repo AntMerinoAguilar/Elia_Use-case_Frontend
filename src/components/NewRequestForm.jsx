@@ -26,8 +26,15 @@ const NewRequestForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
-    if (name.includes("timeSlot")) {
+
+    if (name === "requestType") {
+      setFormData({ ...formData, requestType: value });
+
+      // 🔄 Réinitialiser availableSlots si on repasse à Replacement
+      if (value === "Replacement") {
+        setFormData((prevFormData) => ({ ...prevFormData, availableSlots: [] }));
+      }
+    } else if (name.includes("timeSlot")) {
       const key = name.split(".")[1];
       setFormData({
         ...formData,
@@ -36,7 +43,6 @@ const NewRequestForm = () => {
     } else if (name.includes("availableSlots")) {
       const key = name.split(".")[1];
 
-      // 🔄 Ajout d'un slot si aucun n'existe
       setFormData((prevFormData) => {
         const updatedSlots = [...prevFormData.availableSlots];
 
@@ -52,7 +58,7 @@ const NewRequestForm = () => {
       setFormData({ ...formData, [name]: value });
     }
 
-    setErrors({ ...errors, [name]: "" }); // Supprime l'erreur une fois corrigé
+    setErrors({ ...errors, [name]: "" });
   };
 
   const handleSubmit = async (e) => {
@@ -67,25 +73,21 @@ const NewRequestForm = () => {
       newErrors.timeSlot = "Veuillez remplir toutes les dates de la plage à remplacer.";
     }
 
-    if (!formData.availableSlots.length || !formData.availableSlots?.[0]?.startTime || !formData.availableSlots?.[0]?.endTime) {
-      newErrors.availableSlots = "Veuillez remplir la fourchette de disponibilité.";
-    }    
+    if (formData.requestType === "Swap") {
+      if (!formData.availableSlots.length || !formData.availableSlots?.[0]?.startTime || !formData.availableSlots?.[0]?.endTime) {
+        newErrors.availableSlots = "Veuillez remplir la fourchette de disponibilité.";
+      }
 
-    if (new Date(formData.timeSlot.startTime) >= new Date(formData.timeSlot.endTime)) {
-      newErrors.timeSlot = "La date de début doit être avant la date de fin.";
-    }
+      if (new Date(formData.availableSlots[0].startTime) >= new Date(formData.availableSlots[0].endTime)) {
+        newErrors.availableSlots = "La date de début de la fourchette doit être avant la date de fin.";
+      }
 
-    if (new Date(formData.availableSlots[0].startTime) >= new Date(formData.availableSlots[0].endTime)) {
-      newErrors.availableSlots = "La date de début de la fourchette doit être avant la date de fin.";
-    }
-
-    if (
-      new Date(formData.timeSlot.startTime) < today ||
-      new Date(formData.timeSlot.endTime) < today ||
-      new Date(formData.availableSlots[0].startTime) < today ||
-      new Date(formData.availableSlots[0].endTime) < today
-    ) {
-      newErrors.date = "Toutes les dates doivent être dans le futur.";
+      if (
+        new Date(formData.availableSlots[0].startTime) < today ||
+        new Date(formData.availableSlots[0].endTime) < today
+      ) {
+        newErrors.date = "Toutes les dates doivent être dans le futur.";
+      }
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -96,7 +98,9 @@ const NewRequestForm = () => {
     try {
       const requestData = {
         ...formData,
-        availableSlots: formData.availableSlots.length > 0 ? formData.availableSlots : [{ startTime: "", endTime: "" }],
+        availableSlots: formData.requestType === "Swap" && formData.availableSlots.length > 0
+          ? formData.availableSlots
+          : undefined, // 🔄 Supprimer availableSlots s'il est vide pour un remplacement
       };
 
       const response = await axios.post("http://localhost:3000/api/requests", requestData, {
@@ -158,24 +162,29 @@ const NewRequestForm = () => {
       />
       <hr />
 
-      <h3>Disponibilité</h3>
-      <label>Début :</label>
-      <input
-        type="datetime-local"
-        name="availableSlots.startTime"
-        value={formData.availableSlots.length > 0 ? formData.availableSlots[0].startTime : ""}
-        onChange={handleChange}
-      />
-      {errors.availableSlots && <p className="error">{errors.availableSlots}</p>}
-      <br />
-      <label>Fin :</label>
-      <input
-        type="datetime-local"
-        name="availableSlots.endTime"
-        value={formData.availableSlots.length > 0 ? formData.availableSlots[0].endTime : ""}
-        onChange={handleChange}
-      />
-      <hr />
+      {/* 🔄 Section cachée si "Replacement" est sélectionné */}
+      {formData.requestType === "Swap" && (
+        <>
+          <h3>Disponibilité</h3>
+          <label>Début :</label>
+          <input
+            type="datetime-local"
+            name="availableSlots.startTime"
+            value={formData.availableSlots.length > 0 ? formData.availableSlots[0].startTime : ""}
+            onChange={handleChange}
+          />
+          {errors.availableSlots && <p className="error">{errors.availableSlots}</p>}
+          <br />
+          <label>Fin :</label>
+          <input
+            type="datetime-local"
+            name="availableSlots.endTime"
+            value={formData.availableSlots.length > 0 ? formData.availableSlots[0].endTime : ""}
+            onChange={handleChange}
+          />
+          <hr />
+        </>
+      )}
 
       <h3>Destinataire</h3>
       <label htmlFor="agentId">Choisir un destinataire :</label>
