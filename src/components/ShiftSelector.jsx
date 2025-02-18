@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const ShiftSelector = ({ onSelectShift }) => {
+const ShiftSelector = ({ onSelectShift, selectedShiftId }) => {
   const [shifts, setShifts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -52,6 +52,8 @@ const ShiftSelector = ({ onSelectShift }) => {
   const handleChange = (e) => {
     const selectedShift = shifts.find(shift => shift._id === e.target.value);
 
+    console.log("📌 Shift sélectionné :", selectedShift); // Ajoute ce log pour voir si ça fonctionne
+
     if (selectedShift) {
       onSelectShift({
         id: selectedShift._id,
@@ -68,7 +70,8 @@ const ShiftSelector = ({ onSelectShift }) => {
   }
 
   return (
-    <select id="shiftId" onChange={handleChange}>
+    <select id="shiftId" onChange={handleChange} value={selectedShiftId || ""}>
+      
       <option value="">Sélectionnez un shift</option>
       {shifts.map((shift) => (
         <option key={shift._id} value={shift._id}>
