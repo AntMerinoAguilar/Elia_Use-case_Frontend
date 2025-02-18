@@ -5,19 +5,19 @@ import ShiftSelector from "./ShiftSelector";
 import { useAgent } from "../context/AgentContext";
 
 
+
 const NewRequestForm = () => {
   const { agent } = useAgent();
 
   const [formData, setFormData] = useState({
-    timeSlot: { startTime: "", endTime: "" },
-    requestType: "Replacement", // Par défaut, c'est Replacement
-    availableSlots: [], // 🔄 Initialisation avec un tableau vide
-    isUrgent: false, // 🔹 Ajout de la gestion de l'urgence
-  });
+    timeSlot: { startTime: "", endTime: "" }, // Stocke les dates d'ABSENCE pour les remplacements (Replacement)
+    requestType: "Replacement",
+    availableSlots: [], // Stocke les dates de DISPONIBILITÉ pour les échanges (Swap)
+    isUrgent: false,
+  });  
 
   const [dateLimits, setDateLimits] = useState({ min: "", max: "" });
   const [errors, setErrors] = useState({});
-
 
   useEffect(() => {
     if (agent && agent._id) {
@@ -32,46 +32,54 @@ const NewRequestForm = () => {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
+    // Gestion du type de demande
     if (name === "requestType") {
       const isReplacement = value === "Replacement";
 
       setFormData((prev) => ({
         ...prev,
         requestType: isReplacement && prev.isUrgent ? "Urgent Replacement" : value,
-        isUrgent: isReplacement ? prev.isUrgent : false, // Réinitialiser "Urgent" si on passe à "Swap"
-        availableSlots: isReplacement ? [] : prev.availableSlots, // Supprimer availableSlots si on revient à Replacement
+        isUrgent: isReplacement ? prev.isUrgent : false,
+        availableSlots: isReplacement ? [] : prev.availableSlots,
       }));
+
+    // Gestion de la case "Urgent"
     } else if (name === "isUrgent") {
       setFormData((prev) => ({
         ...prev,
         isUrgent: checked,
-        requestType: checked ? "Urgent Replacement" : "Replacement", // 🔄 Change requestType en fonction de la case cochée
+        requestType: checked ? "Urgent Replacement" : "Replacement",
       }));
+
+    // Gestion des dates d'ABSENCE (timeSlot)
     } else if (name.includes("timeSlot")) {
       const key = name.split(".")[1];
       setFormData({
         ...formData,
         timeSlot: { ...formData.timeSlot, [key]: value },
       });
+
+    // Gestion des dates de DISPONIBILITÉ (availableSlots)
     } else if (name.includes("availableSlots")) {
       const key = name.split(".")[1];
 
       setFormData((prevFormData) => {
         const updatedSlots = prevFormData.availableSlots.length > 0
           ? [...prevFormData.availableSlots]
-          : [{ startTime: "", endTime: "" }]; // Ajout sécurisé
+          : [{ startTime: "", endTime: "" }];
 
         updatedSlots[0] = { ...updatedSlots[0], [key]: value };
 
         return { ...prevFormData, availableSlots: updatedSlots };
       });
+
+    // Gestion des autres champs
     } else {
       setFormData((prev) => ({
         ...prev,
         [name]: value,
       }));
     }
-
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
@@ -156,10 +164,18 @@ const NewRequestForm = () => {
             max: formatDateForInput(shift.endTime),
           });
 
-          setFormData(prev => ({
-            ...prev,
-            shiftId: shift.id,
-          }));
+          setFormData(prev => {
+            return {
+              ...prev,
+              shiftId: shift.id,
+              availableSlots: [
+                {
+                  startTime: formatDateForInput(shift.endTime), // ⬅️ La date min est la fin du shift
+                  endTime: "",
+                }
+              ],
+            };
+          });
         }} 
       />
       <hr />
@@ -212,13 +228,26 @@ const NewRequestForm = () => {
         <>
           <h3>Disponibilités</h3>
           <label>Début :</label>
-          <input type="datetime-local" name="availableSlots.startTime" value={formData.availableSlots[0]?.startTime || ""} onChange={handleChange} />
+          <input
+            type="datetime-local"
+            name="availableSlots.startTime"
+            value={formData.availableSlots[0]?.startTime || ""}
+            onChange={handleChange}
+            min={dateLimits.max} // Empêche la sélection de dates avant la fin du shift
+          />
           <br />
           <label>Fin :</label>
-          <input type="datetime-local" name="availableSlots.endTime" value={formData.availableSlots[0]?.endTime || ""} onChange={handleChange} />
+          <input
+            type="datetime-local"
+            name="availableSlots.endTime"
+            value={formData.availableSlots[0]?.endTime || ""}
+            onChange={handleChange}
+            min={dateLimits.max} // Empêche la sélection de dates avant la fin du shift
+          />
           <hr />
         </>
       )}
+
 
       <h3>Destinataire</h3>
       <label htmlFor="agentId">Choisir un destinataire :</label>
