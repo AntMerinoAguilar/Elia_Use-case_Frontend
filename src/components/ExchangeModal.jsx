@@ -47,30 +47,32 @@ const ExchangeModal = ({ open, onClose, request, onAccept }) => {
   }, [agent, request]); // Recharger la liste si l'agent ou la demande change
 
   const handleAccept = () => {
-    if (!selectedShift || !startTime || !endTime) {
-      setError("Veuillez sélectionner un shift et un créneau horaire.");
-      return;
-    }
+    if (request.requestType === "Swap") {
+      if (!selectedShift || !startTime || !endTime) {
+        setError("Veuillez sélectionner un shift et un créneau horaire.");
+        return;
+      }
 
-    const selectedStart = new Date(startTime).getTime();
-    const selectedEnd = new Date(endTime).getTime();
-    const shiftStart = new Date(selectedShift.startDate).getTime();
-    const shiftEnd = new Date(selectedShift.endDate).getTime();
-    const timeSlotDuration =
-      new Date(request.timeSlot.endTime).getTime() -
-      new Date(request.timeSlot.startTime).getTime();
-    const selectedDuration = selectedEnd - selectedStart;
+      const selectedStart = new Date(startTime).getTime();
+      const selectedEnd = new Date(endTime).getTime();
+      const shiftStart = new Date(selectedShift.startDate).getTime();
+      const shiftEnd = new Date(selectedShift.endDate).getTime();
+      const timeSlotDuration =
+        new Date(request.timeSlot.endTime).getTime() -
+        new Date(request.timeSlot.startTime).getTime();
+      const selectedDuration = selectedEnd - selectedStart;
 
-    if (selectedStart < shiftStart || selectedEnd > shiftEnd) {
-      setError("Le créneau choisi doit être compris dans votre shift.");
-      return;
-    }
+      if (selectedStart < shiftStart || selectedEnd > shiftEnd) {
+        setError("Le créneau choisi doit être compris dans votre shift.");
+        return;
+      }
 
-    if (selectedDuration !== timeSlotDuration) {
-      setError(
-        "La durée du créneau choisi ne correspond pas à la durée demandée."
-      );
-      return;
+      if (selectedDuration !== timeSlotDuration) {
+        setError(
+          "La durée du créneau choisi ne correspond pas à la durée demandée."
+        );
+        return;
+      }
     }
 
     console.log("Valeur sélectionnée au moment du clic :", selectedShift); ////// supp
