@@ -3,10 +3,10 @@ import LoginHandler from "../components/LoginHandler";
 
 const LoginPage = () => {
   return (
-    <>
-      <h1>Login Page</h1>
+    <div className="container">
+      
       <LoginHandler />
-    </>
+    </div>
   )
   
 };

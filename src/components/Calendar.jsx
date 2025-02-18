@@ -71,14 +71,15 @@ const MyCalendar = () => {
   };
 
   return (
-    <div style={{ height: 700 }}>
-      <h2>Calendrier</h2>
+    <div 
+    style={{ height: 700, padding: "10px", }}
+    className="calendar-container">
       <Calendar
         localizer={localizer}
         events={events}
         startAccessor="start"
         endAccessor="end"
-        style={{ height: "100%", margin: "20px" }}
+        style={{ height: "100%", margin: "10px", padding: "10px", gap: "10px" }}
         selectable={true} // Active la sélection
         onSelectEvent={(event) => setSelectedEvent(event)} // Met à jour l'événement sélectionné
         onSelectSlot={(slotInfo) =>
@@ -108,7 +109,7 @@ const MyCalendar = () => {
               <strong>Fin :</strong>{" "}
               {moment(selectedEvent.end).format("DD/MM/YYYY HH:mm")}
             </p>
-            <button onClick={() => setSelectedEvent(null)}>Fermer</button>
+            <div className="modalbtn"><button onClick={() => setSelectedEvent(null)}>Fermer</button></div>
           </div>
         </div>
       )}

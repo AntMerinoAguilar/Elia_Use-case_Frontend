@@ -4,11 +4,10 @@ import ProfileInfo from "../components/ProfileInfo";
 
 const ProfilePage = () => {
   return (
-    <>
+    <div className="container">
       <Navigation />
-      <h1>Profil Page</h1>
       <ProfileInfo />
-    </>
+    </div>
   );
 };
 

@@ -129,7 +129,7 @@ const NewRequestForm = () => {
 
       alert("Demande envoyée avec succès !");
       setFormData({
-        requesterId: "",
+        requesterId: agent._id,
         shiftId: "",
         timeSlot: { startTime: "", endTime: "" },
         requestType: "Replacement",

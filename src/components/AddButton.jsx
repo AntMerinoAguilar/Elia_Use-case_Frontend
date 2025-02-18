@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import '../styles/AddButton.css'
 
 const AddButton = () => {
   const navigate = useNavigate();
@@ -9,9 +10,11 @@ const AddButton = () => {
   };
 
   return (
-    <button onClick={handleClick}>
+    <div className="addbtn">
+      <button onClick={handleClick}>
       +
-    </button>
+      </button>
+    </div>
   );
 };
 
