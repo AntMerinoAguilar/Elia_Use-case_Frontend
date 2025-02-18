@@ -14,7 +14,7 @@ const NewRequestForm = () => {
     requestType: "Replacement",
     availableSlots: [], // Stocke les dates de DISPONIBILITÉ pour les échanges (Swap)
     isUrgent: false,
-  });  
+  });
 
   const [dateLimits, setDateLimits] = useState({ min: "", max: "" });
   const [errors, setErrors] = useState({});
@@ -151,7 +151,8 @@ const NewRequestForm = () => {
 
       <h3>Shift</h3>
       <label htmlFor="shiftId">Choisir un shift :</label>
-      <ShiftSelector 
+      <ShiftSelector
+        selectedShiftId={formData.shiftId}
         onSelectShift={(shift) => {
           const formatDateForInput = (isoString) => {
             if (!isoString) return "";
