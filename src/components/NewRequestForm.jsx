@@ -168,12 +168,9 @@ const NewRequestForm = () => {
             return {
               ...prev,
               shiftId: shift.id,
-              availableSlots: [
-                {
-                  startTime: formatDateForInput(shift.endTime), // ⬅️ La date min est la fin du shift
-                  endTime: "",
-                }
-              ],
+              availableSlots: prev.requestType === "Swap" 
+                ? [{ startTime: formatDateForInput(shift.endTime), endTime: "" }]
+                : [], // Si ce n'est pas un échange, on vide le tableau
             };
           });
         }} 
