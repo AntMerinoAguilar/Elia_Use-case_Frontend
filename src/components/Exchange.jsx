@@ -12,8 +12,7 @@ const Exchange = () => {
   const [selectedRequest, setSelectedRequest] = useState(null); // État pour stocker la demande sélectionnée
   const { agent, loading: agentLoading } = useAgent(); // Récupérer l'agent connecté
 
-  /////////////// 1ère version avec /requests, on reçois toutes les requests et on filtre celles qui nous intéresse
-  // Récupérer les demandes depuis le backend
+  // Récupérer toutes les demandes depuis le backend et filtrer pour montrer à l'agent connecté
   useEffect(() => {
     if (!agent) return;
 
@@ -22,41 +21,17 @@ const Exchange = () => {
         withCredentials: true,
       })
       .then((response) => {
-        console.log(response.data); ///// supp
-
-        // Filtrer les requests visibles par l'agent connecté
         const filteredRequests = response.data.filter((request) => {
-          if (!agent) return false; // Sécurité si l'agent n'est pas chargé
+          const isRequester = request.requesterId?._id === agent._id;
+          const isTarget = request.targetAgentId?._id === agent._id;
 
-          // L'agent ne doit pas voir ses propres demandes
-          /* if (request.requesterId._id === agent._id) return false; */
-
-          // Afficher les replacements et urgent replacements pour tout le monde
-          if (
-            request.requestType === "Replacement" ||
-            request.requestType === "Urgent Replacement"
-          ) {
-            return true;
-          }
-
-          // Afficher les swaps publics
-          if (
-            request.requestType === "Swap" &&
-            request.targetAgentId === null
-          ) {
-            return true;
-          }
-
-          // Afficher les swaps privés uniquement si l'agent est le targetAgentId
-          if (
-            request.requestType === "Swap" &&
-            (request.targetAgentId?._id === agent._id ||
-              request.requesterId?._id === agent._id)
-          ) {
-            return true;
-          }
-
-          return false; // Sinon, ne pas inclure la request
+          // ✅ Filtrer les requests visibles par l'agent connecté
+          return (
+            request.requestType === "Replacement" || // Remplacement (tous les agents)
+            request.requestType === "Urgent Replacement" || // Remplacement urgent (tous)
+            (request.requestType === "Swap" && !request.targetAgentId) || // Swap public
+            (request.requestType === "Swap" && (isTarget || isRequester)) // Swap privé (destinataire ou créateur)
+          );
         });
 
         setRequests(filteredRequests);
@@ -67,23 +42,6 @@ const Exchange = () => {
         setLoading(false);
       });
   }, [agent]);
-
-  /////////////// 2ème verion avec /request/me, on reçois que les requests émises par l'agent connecté.
-  /* useEffect(() => {
-    axios
-      .get("http://localhost:3000/api/requests/me", {
-        withCredentials: true,
-      })
-      .then((response) => {
-        console.log(response.data); // Debug
-        setRequests(response.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError("Erreur lors du chargement des demandes.");
-        setLoading(false);
-      });
-  }, []); */
 
   // Ouvrir le modal avec la demande sélectionnée
   const handleOpenModal = (request) => {
