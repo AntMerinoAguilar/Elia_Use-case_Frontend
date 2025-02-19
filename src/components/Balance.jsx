@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import "../styles/Balance.css";
 
 const Balance = () => {
