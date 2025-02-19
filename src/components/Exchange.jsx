@@ -12,6 +12,7 @@ const Exchange = () => {
   const [selectedRequest, setSelectedRequest] = useState(null); // État pour stocker la demande sélectionnée
   const { agent, loading: agentLoading } = useAgent(); // Récupérer l'agent connecté
 
+  
   // Récupérer toutes les demandes depuis le backend et filtrer pour montrer à l'agent connecté
   useEffect(() => {
     if (!agent) return;
@@ -83,7 +84,7 @@ const Exchange = () => {
         }
       );
 
-      if (response.status === 200) {
+       if (response.status === 200) {
         console.log(response.data.message);
         setRequests((prevRequests) =>
           prevRequests.filter((req) => req._id !== requestId)

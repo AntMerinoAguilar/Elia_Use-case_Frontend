@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAgent } from "../context/AgentContext";
-import { Link } from "react-router-dom"; // Import du Link
+import { Link } from "react-router-dom"; 
 import "../styles/Notifications.css"; 
 
 
@@ -9,7 +9,7 @@ const Notifications = () => {
   const { agent } = useAgent();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
-
+ 
   useEffect(() => {
     if (!agent || !agent._id) return;
 

@@ -31,11 +31,11 @@ h2 {
 }
 
 .notification-item.read {
-    background: #fa9e49;
+    background: #f7b272;
     font-weight: normal;
 }
 
-.notification-item:hover {
+.notification-item.unread:hover {
     background: #ff8e25;
 }
 
