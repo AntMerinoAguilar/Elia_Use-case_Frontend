@@ -1,5 +1,7 @@
 .balance-container {
   padding-top: 15px;
+  height: 590px;
+  overflow-x: auto;
 }
 
 .balance-container ul {
@@ -14,7 +16,7 @@
 .balance-bar {
   position: relative;
   width: 200px; /* Largeur totale */
-  height: 15px; /* Hauteur de la jauge */
+  height: 20px; /* Hauteur de la jauge */
   background-color: #ddd; /* Couleur de fond */
   overflow: hidden;
   margin-top: 5px;

@@ -37,7 +37,7 @@ const Balance = () => {
 
             return (
               <li key={agent._id}>
-                <p>{agent.name} {agent.surname} : {agent.balance} heures</p>
+                <p>{agent.name} {agent.surname} : {Math.round(agent.balance)} heures</p>
                 <div className="balance-bar">
                   <div
                     className={`balance-fill ${agent.balance >= 0 ? "positive" : "negative"}`}
