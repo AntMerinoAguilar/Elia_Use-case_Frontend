@@ -2,52 +2,14 @@
   padding-top: 15px;
 }
 
-/* ✅ Conteneur des onglets (les "dossiers") */
-.tabs {
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-end;
-  position: relative;
-  
+.balance-container ul {
+  width: fit-content; /* Ajuste la largeur au contenu */
+  margin: 0 auto; /* Centre horizontalement */
 }
 
-/* ✅ Style de base des onglets */
-.tab {
-  flex: 1;
-  padding: 10px 15px;
-  text-align: center;
-  font-weight: bold;
-  font-size: 18px;
-  background: #f1f1f1;
-  border-radius: 10px 10px 0 0;
-  box-shadow: inset 0 -3px 5px rgba(0, 0, 0, 0.2); /* Ombre intérieure */
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
-  position: relative;
-  z-index: 1;
+.balance-container li {
+  padding-bottom: 10px;
 }
-
-/* ✅ Effet visuel pour l’onglet actif */
-.tab.active {
-  background: white;
-  box-shadow: 0px -3px 5px rgba(0, 0, 0, 0.2); /* Ombre pour simuler un relief */
-  z-index: 3; /* S'assurer qu'il passe par-dessus */
-}
-
-/* ✅ Éclaircissement du texte des onglets inactifs */
-.tab:not(.active) {
-  color: rgba(0, 0, 0, 0.5);
-}
-
-.tab-content {
-  background: white;
-  padding: 0px 20px 20px 20px;
-  border-radius: 0 0 20px 20px;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2); /* 🔥 Ajuste l'épaisseur et la douceur */
-  position: relative;
-  z-index: 2;
-}
-
 
 .balance-bar {
   position: relative;
