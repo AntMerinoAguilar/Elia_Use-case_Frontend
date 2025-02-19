@@ -4,6 +4,7 @@ import moment from "moment"; //on utilise "moment" pour formater les dates pour 
 import "react-big-calendar/lib/css/react-big-calendar.css"; //importé pour appliquer les styles du calendrier
 import "../styles/calendarStyles.css";
 import axios from "axios"; //utilisé pour effectuer des requêtes HTTP pour récupérer les données du backend (les événements)
+import { display } from "@mui/system";
 
 const localizer = momentLocalizer(moment); // permet d'utiliser "Moment.js" pour gérer et formater les dates et heures dans le calendrier
 moment.updateLocale("fr", { week: { dow: 4 } }); // Définit jeudi (4) comme premier jour de la semaine
@@ -34,23 +35,6 @@ const MyCalendar = () => {
           color: shift.agentId ? shift.agentId.color : "#f41313",
         }));
 
-        // Si tu veux afficher les remplacements dans le calendrier (optionnel)
-        // Ajoute les remplacements comme événements supplémentaires
-        /* response.data.forEach(shift => {
-          if (shift.replacements && shift.replacements.length > 0) {
-            shift.replacements.forEach(replacement => {
-              formattedEvents.push({
-                id: `${shift._id}-replacement-${replacement.replacementId}`,
-                title: `Replacement: ${replacement.replacementId}`,
-                start: new Date(replacement.startTime),
-                end: new Date(replacement.endTime),
-                allDay: false,
-                resource: replacement.status, // Statut du remplacement
-              });
-            });
-          }
-        }); */
-
         setEvents(formattedEvents);
       })
       .catch((error) =>
@@ -64,8 +48,16 @@ const MyCalendar = () => {
       backgroundColor,
       color: "white",
       borderRadius: "5px",
-      padding: "5px",
+      padding: "2px",
       border: "none",
+      height: "auto",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      textAlign: "center",
+      
+      
+      
     };
     return { style };
   };
@@ -79,7 +71,7 @@ const MyCalendar = () => {
         events={events}
         startAccessor="start"
         endAccessor="end"
-        style={{ height: "100%", margin: "10px", padding: "10px", gap: "10px" }}
+        style={{ height: "100%", margin: "10px", padding: "5px", gap: "10px" }}
         selectable={true} // Active la sélection
         onSelectEvent={(event) => setSelectedEvent(event)} // Met à jour l'événement sélectionné
         onSelectSlot={(slotInfo) =>
