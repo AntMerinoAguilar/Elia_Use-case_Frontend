@@ -26,6 +26,7 @@ img {
 .container {
     background-color: rgb(255, 255, 255);
     margin: 0 auto;
+    margin-top: 150px;
     padding: 15px;
     max-width: 390px;
     height: 890px;

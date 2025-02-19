@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import '../styles/ShiftSelector.css'
 
 const ShiftSelector = ({ onSelectShift, selectedShiftId }) => {
   const [shifts, setShifts] = useState([]);
@@ -64,7 +65,7 @@ const ShiftSelector = ({ onSelectShift, selectedShiftId }) => {
   }
 
   return (
-    <select id="shiftId" onChange={handleChange} value={selectedShiftId || ""}>
+    <select id="shiftId" onChange={handleChange} value={selectedShiftId || ""} className="shift-input">
       
       <option value="">Sélectionnez un shift</option>
       {shifts.map((shift) => (
