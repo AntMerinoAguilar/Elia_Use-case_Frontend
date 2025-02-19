@@ -71,7 +71,7 @@ const MyCalendar = () => {
         events={events}
         startAccessor="start"
         endAccessor="end"
-        style={{ height: "100%", margin: "10px", padding: "5px", gap: "5px" }}
+        style={{ height: "100%",/*  margin: "10px", */ /* padding: "5px", */ gap: "5px" }}
         selectable={true} // Active la sélection
         onSelectEvent={(event) => setSelectedEvent(event)} // Met à jour l'événement sélectionné
         onSelectSlot={(slotInfo) =>
