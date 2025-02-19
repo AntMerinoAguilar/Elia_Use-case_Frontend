@@ -84,7 +84,7 @@ const Exchange = () => {
         }
       );
 
-      if (response.status === 200) {
+       if (response.status === 200) {
         console.log(response.data.message);
         setRequests((prevRequests) =>
           prevRequests.filter((req) => req._id !== requestId)
