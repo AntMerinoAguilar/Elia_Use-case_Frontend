@@ -4,6 +4,8 @@ import { useAgent } from "../context/AgentContext";
 import LogoutButton from '../components/LogoutButton'
 import "../styles/ProfileInfo.css";
 import moment from "moment";
+import BalanceBar from "../components/BalanceBar"; // Adapte le chemin si besoin
+
 
 const formatDate = (dateString) => {
   return moment(dateString).format("DD/MM/YYYY HH:mm");
@@ -13,6 +15,9 @@ const AgentProfile = () => {
   const { agent } = useAgent(); // Récupérer l'agent connecté
   const [agentData, setAgentData] = useState(null);
   const [history, setHistory] = useState([]); // Stocke l'historique de l'agent
+  const [allAgents, setAllAgents] = useState([]);
+  const [maxBalance, setMaxBalance] = useState(1);
+
 
   // Charger les informations de l'agent
   useEffect(() => {
@@ -24,6 +29,7 @@ const AgentProfile = () => {
       .catch((error) => console.error("Erreur chargement agent :", error));
   }, [agent]);
 
+
   // Charger l'historique de l'agent
   useEffect(() => {
     if (!agent || !agent._id) return;
@@ -34,10 +40,24 @@ const AgentProfile = () => {
       .catch((error) => console.error("Erreur chargement historique :", error));
   }, [agent]);
 
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/api/agents", { withCredentials: true })
+      .then((response) => {
+        setAllAgents(response.data);
+        const max = Math.max(...response.data.map((a) => Math.abs(a.balance)), 1);
+        setMaxBalance(max);
+      })
+      .catch((error) => console.error("Erreur chargement agents :", error));
+  }, []);
+  
+
   if (!agentData) {
     return <p>Chargement du profil...</p>;
   }
 
+  
   return (
     <div className="profile-container">
     <div className="agent-profile">
@@ -67,7 +87,8 @@ const AgentProfile = () => {
 
       {/* Balance de l'agent */}
       <div className="agent-balance">
-        <p><strong>Balance :</strong> <br />{agentData.balance} heures</p>
+        <p><strong>Balance :</strong> {agentData.balance} heures</p>
+        <BalanceBar balance={agentData.balance} maxBalance={maxBalance} />
       </div>
 
       {/* Historique de l'agent */}
