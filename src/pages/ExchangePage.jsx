@@ -1,26 +1,43 @@
 import React, { useState } from "react";
 import Navigation from "../components/Navigation";
 import Exchange from "../components/Exchange";
-import Balance from "../components/Balance"; // Import du nouveau composant
+import Balance from "../components/Balance";
+import "../styles/exchangePage.css"; // On garde tout dans Balance.css
 
 const ExchangePage = () => {
-  const [view, setView] = useState("exchange"); // État pour gérer l'affichage
+  const [activeTab, setActiveTab] = useState("exchange");
 
   return (
     <div className="container">
       <Navigation />
+      <div className="exchangePage">
+        <h1>Exchange</h1>
+        {/* ✅ Onglets style dossier */}
+        <div className="tabs">
+          <div
+            className={`tab ${activeTab === "exchange" ? "active" : ""}`}
+            onClick={() => setActiveTab("exchange")}
+          >
+            Échanges
+          </div>
+          <div
+            className={`tab ${activeTab === "balance" ? "active" : ""}`}
+            onClick={() => setActiveTab("balance")}
+          >
+            Balances
+          </div>
+        </div>
 
-      {/* Boutons de navigation */}
-      <div>
-        <button onClick={() => setView("exchange")}>Voir les échanges</button>
-        <button onClick={() => setView("balance")}>Voir les balances</button>
+        {/* ✅ Affichage dynamique de la section active */}
+        <div className="tab-content">
+          {activeTab === "exchange" ? <Exchange /> : <Balance />}
+        </div>
       </div>
-
-      {/* Affichage conditionnel */}
-      {view === "exchange" ? <Exchange /> : <Balance />}
+      
     </div>
   );
 };
 
 export default ExchangePage;
+
 
