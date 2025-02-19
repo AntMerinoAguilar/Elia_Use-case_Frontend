@@ -148,7 +148,20 @@ const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
   };
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={onClose} 
+    style={{
+      width: "350px",
+      maxWidth: "90%", 
+      margin: "auto",
+      transform: "translate(-2%, 9.4%)"
+      
+      
+    }}
+    BackdropProps={{
+      style: {
+        backgroundColor: "transparent", // Supprime l'overlay en le rendant transparent
+      },
+    }}>
       <DialogTitle>
         Demande de {request.requestType}
         <IconButton
