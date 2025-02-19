@@ -34,8 +34,6 @@
 .request-type{
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
-    gap: 25px;
     margin-bottom: 15px;
 }
 
@@ -44,10 +42,17 @@
 
     align-items: center;
     gap: 5px;
+    margin-left: 15px;
 }
 
 .form-absence {
     margin-top: 10px;
+}
+
+.form-absence input {
+    height: 40px;
+        border-radius: 5px;
+        border: 1px solid
 }
 
 .formbtn {
