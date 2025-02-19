@@ -28,7 +28,7 @@ const Balance = () => {
   const maxBalance = Math.max(...agents.map(a => Math.abs(a.balance)), 1);
 
   return (
-    <div>
+    
       <div className="balance-container">
         <h2>Balance des agents</h2>
         <ul>
@@ -56,7 +56,7 @@ const Balance = () => {
       
 
       
-    </div>
+    
   );
 };
 

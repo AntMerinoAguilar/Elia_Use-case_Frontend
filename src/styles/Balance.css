@@ -2,21 +2,44 @@
   padding-top: 15px;
   height: 590px;
   overflow-x: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-direction: column;
+
+}
+
+.balance-container h2 {
+  margin-bottom: 20px;
 }
 
 .balance-container ul {
   width: fit-content; /* Ajuste la largeur au contenu */
   margin: 0 auto; /* Centre horizontalement */
-}
+  display: flex;
+    flex-direction: column;
+    /* Organise les éléments de la liste verticalement */
+    gap: 10px;
+    /* Espace entre chaque élément de la liste */
+  }
+   
+
+
 
 .balance-container li {
   padding-bottom: 10px;
+  display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    flex-grow: 1;
+  
 }
 
 .balance-bar {
   position: relative;
   width: 200px; /* Largeur totale */
-  height: 20px; /* Hauteur de la jauge */
+  height: 23px; /* Hauteur de la jauge */
   background-color: #ddd; /* Couleur de fond */
   overflow: hidden;
   margin-top: 5px;
@@ -46,5 +69,7 @@
   transform: translateX(-50%);
 }
 
-
+ul p {
+  font-size: 1.3rem;
+}
 

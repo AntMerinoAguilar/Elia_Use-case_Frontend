@@ -4,7 +4,6 @@
   box-sizing: border-box;
   height: 590px;
   overflow-x: auto;
-  /* font-family: Arial, sans-serif; */
 }
 
 .exchange-title {
@@ -53,24 +52,6 @@ p {
   margin-top: 10px;
 }
 
-/* style pour le bouton de suppression des requests */
-
-/* option 1: bouton "supprimer" */
-/* .delete-btn {
-  background-color: red;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  margin-top: 5px;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-.delete-btn:hover {
-  background-color: darkred;
-} */
-
-/* option 2: croix */
 .delete-btn {
   position: absolute;
   background: none;

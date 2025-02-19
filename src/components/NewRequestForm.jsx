@@ -3,6 +3,7 @@ import axios from "axios";
 import AgentSelector from "./AgentSelector";
 import ShiftSelector from "./ShiftSelector";
 import { useAgent } from "../context/AgentContext";
+import '../styles/NewRequestForm.css'
 
 const NewRequestForm = () => {
   const { agent } = useAgent();
@@ -126,6 +127,7 @@ const NewRequestForm = () => {
 
 
   return (
+    <div className="form-container">
     <form onSubmit={handleSubmit}>
       <h2>Créer une demande</h2>
 
@@ -195,6 +197,7 @@ const NewRequestForm = () => {
 
       <button type="submit">Envoyer la demande</button>
     </form>
+    </div>
   );
 };
 
