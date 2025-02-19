@@ -1,31 +1,22 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAgent } from "../context/AgentContext"; // Import du contexte
 import LoginForm from "./LoginForm";
 
 const LoginHandler = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const { login } = useAgent(); // Utilise la fonction login du contexte
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:3000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        throw new Error("Échec de connexion");
-      }
-
-      alert("✅ Connexion réussie !");
-      navigate("/calendar"); // Redirige vers la page calendrier
+      await login({ username, password }); // 🔥 Appelle la nouvelle fonction login()
+      navigate("/calendar"); // Redirige après connexion
     } catch (error) {
-      console.error("Erreur :", error);
+      console.error("Erreur de connexion :", error);
     }
   };
 
