@@ -12,6 +12,7 @@ const Exchange = () => {
   const [selectedRequest, setSelectedRequest] = useState(null); // État pour stocker la demande sélectionnée
   const { agent, loading: agentLoading } = useAgent(); // Récupérer l'agent connecté
 
+  
   // Récupérer toutes les demandes depuis le backend et filtrer pour montrer à l'agent connecté
   useEffect(() => {
     if (!agent) return;

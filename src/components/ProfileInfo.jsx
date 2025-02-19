@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAgent } from "../context/AgentContext";
+import LogoutButton from '../components/LogoutButton'
 import "../styles/ProfileInfo.css";
 import moment from "moment";
 
@@ -39,8 +40,11 @@ const AgentProfile = () => {
 
   return (
     <div className="agent-profile">
+      
       {/* Bannière avec la couleur de l'agent */}
-      <div className="banner" style={{ backgroundColor: agentData.color }}></div>
+      <div className="banner" style={{ backgroundColor: agentData.color }}>
+        <LogoutButton />
+      </div>
 
       {/* Image de profil */}
       <div className="profile-pic-container">
