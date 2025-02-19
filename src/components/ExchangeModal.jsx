@@ -4,14 +4,16 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  IconButton,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import Button from "./ui/Button";
 import Select from "./ui/Select";
 import MenuItem from "./ui/MenuItem";
 import axios from "axios";
 import { useAgent } from "../context/AgentContext";
 
-const ExchangeModal = ({ open, onClose, request, onAccept }) => {
+const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
   const [selectedShift, setSelectedShift] = useState(null);
   const [startTime, setStartTime] = useState(""); // Heure de début du sous-shift
   const [endTime, setEndTime] = useState(""); // Heure de fin du sous-shift
@@ -85,9 +87,52 @@ const ExchangeModal = ({ open, onClose, request, onAccept }) => {
 
   };
 
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm(
+      "Êtes-vous sûr de vouloir supprimer votre demande ?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/api/requests/${request._id}/cancel`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      onClose(); // Fermer la modal après suppression
+
+      if (response.status === 200) {
+        setRequests((prevRequests) =>
+          prevRequests.filter((req) => req._id !== request._id)
+        ); // Supprimer la demande de la liste
+      } else {
+        setError("Erreur lors de la suppression.");
+      }
+    } catch (error) {
+      console.error("Erreur lors de la suppression de la request :", error);
+      setError("Impossible de supprimer la demande.");
+    }
+  };
+
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Demande de {request.requestType}</DialogTitle>
+      <DialogTitle>
+        Demande de {request.requestType}
+        <IconButton
+          aria-label="Fermer"
+          onClick={onClose}
+          style={{
+            position: "absolute",
+            right: 8,
+            top: 8,
+            color: "#888",
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
       <DialogContent>
         <p>
           <strong>Agent :</strong> {request.requesterId.name}{" "}
@@ -190,20 +235,23 @@ const ExchangeModal = ({ open, onClose, request, onAccept }) => {
         {error && <p style={{ color: "red" }}>{error}</p>}
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} variant="outlined">
-          Annuler
-        </Button>
-        <Button
-          onClick={handleAccept}
-          variant="contained"
-          color="primary"
-          disabled={
-            request.requestType === "Swap" &&
-            (!selectedShift || !startTime || !endTime)
-          }
-        >
-          Accepter
-        </Button>
+        {request.requesterId._id === agent._id ? (
+          <Button onClick={handleDelete} variant="contained" color="error">
+            Supprimer
+          </Button>
+        ) : (
+          <Button
+            onClick={handleAccept}
+            variant="contained"
+            color="primary"
+            disabled={
+              request.requestType === "Swap" &&
+              (!selectedShift || !startTime || !endTime)
+            }
+          >
+            Accepter
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );
