@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../styles/Balance.css";
+import BalanceBar from "./BalanceBar"; // Ajout de l'import correct
 
 const Balance = () => {
   const [agents, setAgents] = useState([]);
@@ -28,35 +29,17 @@ const Balance = () => {
   const maxBalance = Math.max(...agents.map(a => Math.abs(a.balance)), 1);
 
   return (
-    
-      <div className="balance-container">
-        <h2>Balance des agents</h2>
-        <ul>
-          {agents.map((agent) => {
-            const balancePercentage = (Math.abs(agent.balance) / maxBalance) * 50;
-
-            return (
-              <li key={agent._id}>
-                <p>{agent.name} {agent.surname} : {Math.round(agent.balance)} heures</p>
-                <div className="balance-bar">
-                  <div
-                    className={`balance-fill ${agent.balance >= 0 ? "positive" : "negative"}`}
-                    style={{
-                      width: `${balancePercentage}%`,
-                      left: agent.balance < 0 ? `${50 - balancePercentage}%` : "50%"
-                    }}
-                  ></div>
-                  <div className="balance-midline"></div>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-      
-
-      
-    
+    <div className="balance-container">
+      <h2>Balance des agents</h2>
+      <ul>
+        {agents.map((agent) => (
+          <li key={agent._id}>
+            <p>{agent.name} {agent.surname} : {Math.round(agent.balance)} heures</p>
+            <BalanceBar balance={agent.balance} maxBalance={maxBalance} />
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 };
 
