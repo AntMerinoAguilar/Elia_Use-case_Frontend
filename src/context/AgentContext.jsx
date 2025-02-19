@@ -14,7 +14,6 @@ export const AgentProvider = ({ children }) => {
         withCredentials: true,
       });
 
-      console.log("✅ Utilisateur récupéré après un refresh :", response.data);
       setAgent(response.data);
     } catch (error) {
       if (error.response && error.response.status === 401) {
