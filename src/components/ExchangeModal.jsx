@@ -18,6 +18,7 @@ const ExchangeModal = ({ open, onClose, request, onAccept }) => {
   const [agentShifts, setAgentShifts] = useState([]); // Stocke les shifts de l'agent
   const [error, setError] = useState(""); // Gérer l'erreur dans la modal
   const { agent } = useAgent(); // Récupérer l'agent connecté
+  
 
   // Charger les shifts de l'agent connecté
   useEffect(() => {
@@ -47,7 +48,7 @@ const ExchangeModal = ({ open, onClose, request, onAccept }) => {
   }, [agent, request]); // Recharger la liste si l'agent ou la demande change
 
   const handleAccept = () => {
-    if (request.requestType === "Swap") {
+    if (request.requestType === "Swap" ) {
       if (!selectedShift || !startTime || !endTime) {
         setError("Veuillez sélectionner un shift et un créneau horaire.");
         return;
@@ -73,7 +74,7 @@ const ExchangeModal = ({ open, onClose, request, onAccept }) => {
         );
         return;
       }
-    }
+    } 
 
     console.log("Valeur sélectionnée au moment du clic :", selectedShift); ////// supp
     // Si la logique côté backend échoue, on affiche l'erreur dans la modal
@@ -81,6 +82,7 @@ const ExchangeModal = ({ open, onClose, request, onAccept }) => {
       setError(err.message)
     ); // Capturer les erreurs retournées
     onClose();
+
   };
 
   return (
