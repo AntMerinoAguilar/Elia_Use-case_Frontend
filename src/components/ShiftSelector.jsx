@@ -39,12 +39,6 @@ const ShiftSelector = ({ onSelectShift, selectedShiftId }) => {
       day: "2-digit",
     });
   
-    /* const formattedTime = date.toLocaleTimeString("fr-FR", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: undefined, // 🔹 Assure l'exclusion des secondes
-      hour12: false, // 🔹 Format 24h
-    }); */
   
     return `${formattedDate} `; // ${formattedTime}
   };
@@ -83,3 +77,5 @@ const ShiftSelector = ({ onSelectShift, selectedShiftId }) => {
 };
 
 export default ShiftSelector;
+
+
