@@ -20,7 +20,14 @@ const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
   const [agentShifts, setAgentShifts] = useState([]); // Stocke les shifts de l'agent
   const [error, setError] = useState(""); // Gérer l'erreur dans la modal
   const { agent } = useAgent(); // Récupérer l'agent connecté
-  
+
+  // Met à jour les valeurs au changement de request
+  useEffect(() => {
+    setSelectedShift(null);
+    setStartTime("");
+    setEndTime("");
+    setError("");
+  }, [request]);
 
   // Charger les shifts de l'agent connecté
   useEffect(() => {
@@ -50,7 +57,7 @@ const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
   }, [agent, request]); // Recharger la liste si l'agent ou la demande change
 
   const handleAccept = () => {
-    if (request.requestType === "Swap" ) {
+    if (request.requestType === "Swap") {
       if (!selectedShift || !startTime || !endTime) {
         setError("Veuillez sélectionner un shift et un créneau horaire.");
         return;
@@ -76,7 +83,24 @@ const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
         );
         return;
       }
-    } 
+    }
+
+    if (request.requestType === "Urgent Replacement") {
+      if (!startTime || !endTime) {
+        setError("Veuillez sélectionner un créneau horaire.");
+        return;
+      }
+
+      /* const selectedStart = new Date(startTime).getTime();
+      const selectedEnd = new Date(endTime).getTime();
+      const shiftStart = new Date(request.timeSlot.startDate).getTime();
+      const shiftEnd = new Date(request.timeSlot.endDate).getTime();
+
+      if (selectedStart < shiftStart || selectedEnd > shiftEnd) {
+        setError("Le créneau choisi doit être compris dans le shift proposé.");
+        return;
+      } */
+    }
 
     console.log("Valeur sélectionnée au moment du clic :", selectedShift); ////// supp
     // Si la logique côté backend échoue, on affiche l'erreur dans la modal
@@ -85,6 +109,13 @@ const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
     ); // Capturer les erreurs retournées
     onClose();
 
+    if (response.status === 200) {
+      setRequests((prevRequests) =>
+        prevRequests.filter((req) => req._id !== request._id)
+      ); // Supprimer la demande de la liste
+    } else {
+      setError("Erreur lors de la suppression.");
+    }
   };
 
   const handleDelete = async () => {
@@ -141,7 +172,7 @@ const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
 
         <hr />
         <p>
-          <strong>Shift à échanger :</strong>
+          <strong>Shift à prendre :</strong>
         </p>
         <p>
           <strong>Début :</strong>{" "}
@@ -228,6 +259,42 @@ const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
                 />
               </>
             )}
+          </div>
+        )}
+
+        {request.requestType === "Urgent Replacement" && (
+          <div>
+            <hr />
+            <p>
+              <strong>Shift proposé :</strong>
+            </p>
+            <p>
+              Sélectionnez la période que vous souhaitez accepter <br />
+              (tout ou une partie du shift) :
+            </p>
+            <label>Début :</label>
+            <input
+              type="datetime-local"
+              value={startTime}
+              min={new Date(request?.timeSlot?.startTime)
+                .toISOString()
+                .slice(0, 16)}
+              max={new Date(request?.timeSlot?.endTime)
+                .toISOString()
+                .slice(0, 16)}
+              onChange={(e) => setStartTime(e.target.value)}
+            />
+
+            <label>Fin :</label>
+            <input
+              type="datetime-local"
+              value={endTime}
+              min={startTime}
+              max={new Date(request?.timeSlot?.endTime)
+                .toISOString()
+                .slice(0, 16)}
+              onChange={(e) => setEndTime(e.target.value)}
+            />
           </div>
         )}
 
