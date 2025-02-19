@@ -48,11 +48,11 @@ const Notifications = () => {
 
   return (
     <div className="notifications-container">
-      <h2>Notifications</h2>
+      <h2 className="notifications-title">Notifications</h2>
       {loading ? (
         <p className="loading">Chargement...</p>
       ) : notifications.length === 0 ? (
-        <p className="no-notifications">Aucune notification.</p>
+        <p className="no-notifications">Aucune notification</p>
       ) : (
         <ul className="notification-list">
           {notifications.map((notif) => (

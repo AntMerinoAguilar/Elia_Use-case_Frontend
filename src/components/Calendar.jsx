@@ -72,7 +72,7 @@ const MyCalendar = () => {
 
   return (
     <div 
-    style={{ height: 700, padding: "10px", }}
+    style={{ padding: "10px", }}
     className="calendar-container">
       <Calendar
         localizer={localizer}

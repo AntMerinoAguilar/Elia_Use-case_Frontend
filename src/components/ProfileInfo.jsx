@@ -39,6 +39,7 @@ const AgentProfile = () => {
   }
 
   return (
+    <div className="profile-container">
     <div className="agent-profile">
       
       {/* Bannière avec la couleur de l'agent */}
@@ -87,6 +88,7 @@ const AgentProfile = () => {
         )}
       </div>
       
+    </div>
     </div>
   );
 };
