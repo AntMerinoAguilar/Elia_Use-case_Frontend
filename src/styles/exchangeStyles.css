@@ -2,7 +2,13 @@
   padding: 10px;
   margin: 0;
   box-sizing: border-box;
+  height: 590px;
+  overflow-x: auto;
   /* font-family: Arial, sans-serif; */
+}
+
+.exchange-title {
+  margin-bottom: 15px;
 }
 
 .cards-container {

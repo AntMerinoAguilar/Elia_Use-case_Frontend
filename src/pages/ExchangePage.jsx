@@ -11,7 +11,7 @@ const ExchangePage = () => {
     <div className="container">
       <Navigation />
       <div className="exchangePage">
-        <h1>Exchange</h1>
+        {/* ✅ Onglets style dossier */}
         <div className="tabs">
           <div
             className={`tab ${activeTab === "exchange" ? "active" : ""}`}

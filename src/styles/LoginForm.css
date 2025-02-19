@@ -36,7 +36,8 @@ input:focus {
 
 .logo {
     width: 250px;
-    margin-bottom: 150px;
+    margin-bottom: 120px;
+    margin-top: 40px;
 }
 
 .login-btn {

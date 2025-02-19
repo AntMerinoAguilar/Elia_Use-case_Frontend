@@ -12,7 +12,7 @@ a {
 }
 
 body {
-    background-color: #ffffff;
+    background-color: #eeeeee;
     color: rgb(32, 31, 31);
     font-family: "Roboto", serif;
 }
@@ -28,7 +28,7 @@ img {
     margin: 0 auto;
     padding: 15px;
     max-width: 390px;
-    min-height: 890px;
+    height: 890px;
     border-radius: 40px;
     box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;;
 }

@@ -144,7 +144,7 @@ const Exchange = () => {
 
   return (
     <div className="exchange-container">
-      <h2>Demandes</h2>
+      <h2 className="exchange-title">Demandes</h2>
 
       {/* Gestion des erreurs */}
       {error && <p style={{ color: "red" }}>{error}</p>}
