@@ -7,6 +7,7 @@ import unreadnotif from '../assets/notifications non lu.png';
 import newrequest from '../assets/requests non lu.png';
 import request from '../assets/requests lu.png';
 import profile from '../assets/utilisateur.png'
+import LogoutButton from "./LogoutButton"; // Import du bouton de déconnexion
 import '../styles/Navigation.css'
 
 const Navigation = () => {
@@ -26,6 +27,9 @@ const Navigation = () => {
         </li>
         <li className="navlink profile">
           <Link to="/profile"><img src={profile} alt="" /></Link>
+        </li>
+        <li className="navlink">
+          <LogoutButton />
         </li>
       </ul>
     </nav>
