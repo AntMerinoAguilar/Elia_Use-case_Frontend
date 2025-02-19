@@ -132,7 +132,8 @@ const NewRequestForm = () => {
       <h2>Créer une demande</h2>
 
       <h3>Shift</h3>
-      <label htmlFor="shiftId">Choisir un shift :</label>
+      <div className="shift-request">
+      <label htmlFor="shiftId"></label>
       <ShiftSelector
         selectedShiftId={formData.shiftId}
         onSelectShift={(shift) => {
@@ -152,24 +153,30 @@ const NewRequestForm = () => {
           }));
         }}
       />
+      </div>
       <hr />
 
       <h3>Type de demande</h3>
-      <label>Choisir une demande :</label>
-      <select name="requestType" value={formData.requestType} onChange={handleChange}>
+      <div className="request-type">
+      <label htmlFor="requestType"></label>
+      <select name="requestType" value={formData.requestType} onChange={handleChange} className="request-input">
         <option value="Replacement">Remplacement</option>
         <option value="Swap">Échange</option>
       </select>
 
       {formData.requestType.includes("Replacement") && (
-        <div>
-          <input type="checkbox" id="isUrgent" name="isUrgent" checked={formData.isUrgent} onChange={handleChange} />
+        <div className="urgent-checkbox">
           <label htmlFor="isUrgent">Urgent</label>
+          <input type="checkbox" id="isUrgent" name="isUrgent" checked={formData.isUrgent} onChange={handleChange} />
+          
         </div>
+        
       )}
+      </div>
       <hr />
 
       <h3>Absence</h3>
+      <div className="form-absence">
       <label>Début :</label>
       <input type="datetime-local" name="timeSlot.startTime" value={formData.timeSlot.startTime} onChange={handleChange} min={dateLimits.min} max={dateLimits.max} required />
       <br />
@@ -185,17 +192,19 @@ const NewRequestForm = () => {
           <br />
           <label>Fin :</label>
           <input type="datetime-local" name="availableSlots.endTime" value={formData.availableSlots[0]?.endTime || ""} onChange={handleChange} min={dateLimits.max} />
-          <hr />
+          
         </>
       )}
+      </div>
+      <hr />
 
       <h3>Destinataire</h3>
-      <label htmlFor="agentId">Choisir un destinataire :</label>
+      <label htmlFor="agentId"></label>
       <AgentSelector onSelectAgent={(id) => setFormData((prev) => ({ ...prev, targetAgentId: id }))} />
 
       {errors.submit && <p className="error">{errors.submit}</p>}
 
-      <button type="submit">Envoyer la demande</button>
+      <div className="formbtn"><button type="submit" >Envoyer la demande</button></div>
     </form>
     </div>
   );

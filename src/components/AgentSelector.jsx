@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAgent } from "../context/AgentContext";
+import '../styles/AgentSelector.css'
 
 const AgentSelector = ({ onSelectAgent }) => {
   // Récupération de l'agent connecté et de l'état de chargement via useAgent
@@ -52,7 +53,7 @@ const AgentSelector = ({ onSelectAgent }) => {
   }
 
   return (
-    <select id="agentId" value={selectedAgent} onChange={handleChange}>
+    <select id="agentId" value={selectedAgent} onChange={handleChange} className="agent-input">
       <option value="">Public (tous les agents)</option>
       {agents.map((agent) => (
         <option key={agent._id} value={agent._id}>

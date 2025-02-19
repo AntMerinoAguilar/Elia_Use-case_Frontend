@@ -59,6 +59,10 @@
     margin: 5px 0;
 }
 
+.agent-history {
+    margin-top: 20px;
+}
+
 li {
     list-style: none;
 }
