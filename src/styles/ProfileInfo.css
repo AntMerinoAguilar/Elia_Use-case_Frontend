@@ -1,6 +1,7 @@
 .profile-container {
     padding: 15px;
     
+    
 }
 
 .agent-profile {
@@ -10,7 +11,6 @@
     margin: auto;
     text-align: center;
     border-radius: 10px;
-    overflow: hidden;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
     background: white;
     height: 650px;
