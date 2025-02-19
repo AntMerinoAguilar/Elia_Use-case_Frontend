@@ -3,6 +3,7 @@ import axios from "axios";
 import "../styles/exchangeStyles.css";
 import ModalRequest from "./ExchangeModal";
 import { useAgent } from "../context/AgentContext";
+import { X } from "lucide-react";
 
 const Exchange = () => {
   const [requests, setRequests] = useState([]);
@@ -111,6 +112,32 @@ const Exchange = () => {
     }
   };
 
+  // Fonction pour supprimer la demande
+  const handleDeleteRequest = async (requestId) => {
+    const confirmDelete = window.confirm(
+      "Êtes-vous sûr de vouloir supprimer votre demande ?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/api/requests/${requestId}/cancel`,
+        { withCredentials: true }
+      );
+
+      if (response.status === 200) {
+        setRequests((prevRequests) =>
+          prevRequests.filter((req) => req._id !== requestId)
+        ); // Supprimer la demande de la liste
+      } else {
+        setError("Erreur lors de la suppression.");
+      }
+    } catch (error) {
+      console.error("Erreur lors de la suppression de la demande", error);
+      setError("Impossible de supprimer la demande.");
+    }
+  };
+
   // Gestion du chargement des infos de l'agent
   if (agentLoading) return <p>Chargement des informations de l'agent...</p>;
 
@@ -133,15 +160,27 @@ const Exchange = () => {
                 className="request-card"
                 onClick={() => handleOpenModal(request)} // Ouvrir le modal au clic
               >
-                <h3>{request.type}</h3>
                 <p className="requester-name">
                   {request.requesterId.name} {request.requesterId.surname}
                 </p>
-                <p>{request.requestType} :</p>
+                <p className="request-type">{request.requestType} :</p>
                 <p className="time-slot">
                   {new Date(request.timeSlot.startTime).toLocaleString()} →{" "}
                   {new Date(request.timeSlot.endTime).toLocaleString()}
                 </p>
+
+                {/* Bouton de suppression uniquement pour l'agent qui a créé la request */}
+                {request.requesterId._id === agent._id && (
+                  <button
+                    className="delete-btn"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Empêche d'ouvrir la modal au clic
+                      handleDeleteRequest(request._id);
+                    }}
+                  >
+                    <X size={30} />
+                  </button>
+                )}
               </div>
             ))
           ) : (
@@ -156,6 +195,7 @@ const Exchange = () => {
           open={openModal}
           onClose={handleCloseModal}
           request={selectedRequest}
+          setRequests={setRequests}
           onAccept={handleAcceptRequest}
         />
       )}
