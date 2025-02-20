@@ -52,9 +52,9 @@ export const AgentProvider = ({ children }) => {
   };
   
 
-  useEffect(() => {
+/*   useEffect(() => {
     fetchAgent(); // Récupère l'agent au démarrage
-  }, []);
+  }, []); */
 
   return (
     <AgentContext.Provider value={{ agent, loading, login, logout, fetchAgent }}>
