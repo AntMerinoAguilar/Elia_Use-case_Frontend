@@ -8,6 +8,7 @@ import notif from '../assets/notifications lu.png';
 import unreadnotif from '../assets/notifications non lu.png';
 import request from '../assets/requests lu.png';
 import profile from '../assets/utilisateur.png';
+import {API_URL} from '../config/api.config'
 import '../styles/Navigation.css';
 
 const Navigation = () => {
@@ -19,7 +20,7 @@ const Navigation = () => {
     if (!agent || !agent._id) return;
 
     axios
-      .get(`http://localhost:3000/api/notif/${agent._id}`, { withCredentials: true })
+      .get(`${API_URL}/notif/${agent._id}`, { withCredentials: true })
       .then((response) => {
         const hasUnread = response.data.some(notif => !notif.isRead);
         setHasUnreadNotifs(hasUnread);

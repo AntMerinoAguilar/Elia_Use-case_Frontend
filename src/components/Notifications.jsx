@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAgent } from "../context/AgentContext";
 import { Link } from "react-router-dom";
-import {API_URL} from '../config/api.config' 
+import {API_URL} from '../config/api.config'
 import "../styles/Notifications.css"; 
 
 
@@ -15,7 +15,7 @@ const Notifications = () => {
     if (!agent || !agent._id) return;
 
     axios
-      .get(`http://localhost:3000/api/notif/${agent._id}`, { withCredentials: true })
+      .get(`${API_URL}/notif/${agent._id}`, { withCredentials: true })
       .then((response) => {
         const sortedNotifications = response.data.sort((a, b) => {
           // Trier d'abord par isRead (false en premier), puis par date descendante
@@ -36,7 +36,7 @@ const Notifications = () => {
 
   const markAsRead = (id) => {
     axios
-      .put(`http://localhost:3000/api/notif/${id}/read`, {}, { withCredentials: true })
+      .put(`${API_URL}/notif/${id}/read`, {}, { withCredentials: true })
       .then(() => {
         setNotifications((prev) =>
           prev.map((notif) => (notif._id === id ? { ...notif, isRead: true } : notif))

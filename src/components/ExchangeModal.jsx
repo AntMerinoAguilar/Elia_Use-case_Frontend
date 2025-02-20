@@ -12,6 +12,7 @@ import Select from "./ui/Select";
 import MenuItem from "./ui/MenuItem";
 import axios from "axios";
 import { useAgent } from "../context/AgentContext";
+import {API_URL} from '../config/api.config'
 
 const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
   const [selectedShift, setSelectedShift] = useState(null);
@@ -34,7 +35,7 @@ const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
     if (!request || request.requestType !== "Swap") return; ///// potentiellement supp
 
     axios
-      .get("http://localhost:3000/api/shifts/me", {
+      .get(`${API_URL}/shifts/me`, {
         withCredentials: true,
       })
       .then((response) => {
@@ -126,7 +127,7 @@ const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
 
     try {
       const response = await axios.delete(
-        `http://localhost:3000/api/requests/${request._id}/cancel`,
+        `${API_URL}/requests/${request._id}/cancel`,
         {
           withCredentials: true,
         }

@@ -4,6 +4,7 @@ import "../styles/exchangeStyles.css";
 import ModalRequest from "./ExchangeModal";
 import { useAgent } from "../context/AgentContext";
 import { X } from "lucide-react";
+import {API_URL} from '../config/api.config'
 
 const Exchange = () => {
   const [requests, setRequests] = useState([]);
@@ -19,7 +20,7 @@ const Exchange = () => {
     if (!agent) return;
 
     axios
-      .get("http://localhost:3000/api/requests", {
+      .get(`${API_URL}/requests`, {
         withCredentials: true,
       })
       .then((response) => {
@@ -75,7 +76,7 @@ const Exchange = () => {
 
       // Effectuer l'appel API pour accepter la demande
       const response = await axios.put(
-        `http://localhost:3000/api/requests/${requestId}/accept`,
+        `${API_URL}/requests/${requestId}/accept`,
         requestData,
         {
           withCredentials: true,
@@ -122,7 +123,7 @@ const Exchange = () => {
 
     try {
       const response = await axios.delete(
-        `http://localhost:3000/api/requests/${requestId}/cancel`,
+        `${API_URL}/requests/${requestId}/cancel`,
         { withCredentials: true }
       );
 

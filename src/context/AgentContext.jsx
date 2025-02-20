@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
+import {API_URL} from '../config/api.config';
 
 const AgentContext = createContext();
 
@@ -10,7 +11,7 @@ export const AgentProvider = ({ children }) => {
   const fetchAgent = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("http://localhost:3000/api/agents/me", {
+      const response = await axios.get(`${API_URL}/agents/me`, {
         withCredentials: true,
       });
 
@@ -29,7 +30,7 @@ export const AgentProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      const response = await axios.post("http://localhost:3000/api/auth/login", credentials, {
+      const response = await axios.post(`${API_URL}/auth/login`, credentials, {
         withCredentials: true,
       });
       await fetchAgent(); // 🔥 Recharge l'agent après connexion
@@ -42,7 +43,7 @@ export const AgentProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await axios.post("http://localhost:3000/api/auth/logout", {}, { withCredentials: true });
+      await axios.post(`${API_URL}/auth/logout`, {}, { withCredentials: true });
     } catch (error) {
       console.error("Erreur de déconnexion :", error);
     }

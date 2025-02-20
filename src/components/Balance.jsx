@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../styles/Balance.css";
 import BalanceBar from "./BalanceBar"; // Ajout de l'import correct
+import {API_URL} from '../config/api.config'
 
 const Balance = () => {
   const [agents, setAgents] = useState([]);
@@ -8,7 +9,7 @@ const Balance = () => {
   useEffect(() => {
     const fetchAgents = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/agents", {
+        const response = await fetch(`${API_URL}/api/agents`, {
           method: "GET",
           credentials: "include",
         });

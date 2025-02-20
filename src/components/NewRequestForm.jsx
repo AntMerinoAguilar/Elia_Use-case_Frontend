@@ -3,6 +3,7 @@ import axios from "axios";
 import AgentSelector from "./AgentSelector";
 import ShiftSelector from "./ShiftSelector";
 import { useAgent } from "../context/AgentContext";
+import {API_URL} from '../config/api.config'
 import '../styles/NewRequestForm.css'
 
 const NewRequestForm = () => {
@@ -104,7 +105,7 @@ const NewRequestForm = () => {
     try {
       const { isUrgent, ...requestData } = formData;
 
-      await axios.post("http://localhost:3000/api/requests", requestData, {
+      await axios.post(`${API_URL}/requests`, requestData, {
         withCredentials: true,
       });
 

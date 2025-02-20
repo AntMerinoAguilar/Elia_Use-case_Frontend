@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAgent } from "../context/AgentContext";
+import {API_URL} from '../config/api.config'
 import '../styles/AgentSelector.css'
 
 const AgentSelector = ({ onSelectAgent }) => {
@@ -16,7 +17,7 @@ const AgentSelector = ({ onSelectAgent }) => {
     const fetchAgents = async () => {
       try {
         // Appel API pour récupérer tous les agents
-        const response = await axios.get("http://localhost:3000/api/agents", {
+        const response = await axios.get(`${API_URL}/agents`, {
           withCredentials: true, // Inclure les cookies pour l'authentification si nécessaire
         });
 
