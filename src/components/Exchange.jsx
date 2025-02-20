@@ -4,7 +4,8 @@ import "../styles/exchangeStyles.css";
 import ModalRequest from "./ExchangeModal";
 import { useAgent } from "../context/AgentContext";
 import { X } from "lucide-react";
-import {API_URL} from '../config/api.config'
+import { API_URL } from "../config/api.config";
+import ConfirmModal from "./ui/ConfirmModal";
 
 const Exchange = () => {
   const [requests, setRequests] = useState([]);
@@ -13,8 +14,9 @@ const Exchange = () => {
   const [openModal, setOpenModal] = useState(false); // État pour ouvrir/fermer le modal
   const [selectedRequest, setSelectedRequest] = useState(null); // État pour stocker la demande sélectionnée
   const { agent, loading: agentLoading } = useAgent(); // Récupérer l'agent connecté
+  const [confirmDelete, setConfirmDelete] = useState(false); // Nouvel état pour le modal de confirmation
+  const [requestToDelete, setRequestToDelete] = useState(null); // Stocker la request à supprimer
 
-  
   // Récupérer toutes les demandes depuis le backend et filtrer pour montrer à l'agent connecté
   useEffect(() => {
     if (!agent) return;
@@ -46,16 +48,28 @@ const Exchange = () => {
       });
   }, [agent]);
 
-  // Ouvrir le modal avec la demande sélectionnée
+  // Ouvrir le modal de la request
   const handleOpenModal = (request) => {
     setSelectedRequest(request); // Stocke la demande sélectionnée
     setOpenModal(true); // Ouvre le modal
   };
 
-  // Fermer le modal
+  // Fermer le modal de la request
   const handleCloseModal = () => {
     setOpenModal(false);
     setSelectedRequest(null); // Réinitialiser la demande sélectionnée
+  };
+
+  // Fonction pour ouvrir le modal de confirmation
+  const handleOpenConfirmModal = (requestId) => {
+    setRequestToDelete(requestId);
+    setConfirmDelete(true);
+  };
+
+  // Fonction pour fermer le modal de confirmation
+  const handleCloseConfirmModal = () => {
+    setRequestToDelete(null);
+    setConfirmDelete(false);
   };
 
   // Fonction pour accepter la demande
@@ -86,7 +100,7 @@ const Exchange = () => {
         }
       );
 
-       if (response.status === 200) {
+      if (response.status === 200) {
         console.log(response.data.message);
         setRequests((prevRequests) =>
           prevRequests.filter((req) => req._id !== requestId)
@@ -114,7 +128,7 @@ const Exchange = () => {
     }
   };
 
-  // Fonction pour supprimer la demande
+  /* // Fonction pour supprimer la demande
   const handleDeleteRequest = async (requestId) => {
     const confirmDelete = window.confirm(
       "Êtes-vous sûr de vouloir supprimer votre demande ?"
@@ -138,6 +152,30 @@ const Exchange = () => {
       console.error("Erreur lors de la suppression de la demande", error);
       setError("Impossible de supprimer la demande.");
     }
+  }; */
+
+  const handleDeleteRequest = (requestId) => {
+    setRequestToDelete(requestId);
+    setConfirmDelete(true);
+  };
+
+  const confirmDeleteRequest = async () => {
+    if (!requestToDelete) return;
+
+    try {
+      await axios.delete(`${API_URL}/requests/${requestToDelete}/cancel`, {
+        withCredentials: true,
+      });
+
+      setRequests((prevRequests) =>
+        prevRequests.filter((req) => req._id !== requestToDelete)
+      );
+    } catch (error) {
+      console.error("Erreur lors de la suppression de la demande", error);
+      setError("Impossible de supprimer la demande.");
+    }
+
+    handleCloseConfirmModal(); // Fermer le modal après suppression
   };
 
   // Gestion du chargement des infos de l'agent
@@ -199,6 +237,16 @@ const Exchange = () => {
           request={selectedRequest}
           setRequests={setRequests}
           onAccept={handleAcceptRequest}
+        />
+      )}
+
+      {confirmDelete && (
+        <ConfirmModal
+          isOpen={confirmDelete}
+          onClose={handleCloseConfirmModal}
+          onConfirm={confirmDeleteRequest} // Appelle la fonction de suppression
+          title="Confirmer la suppression"
+          message="Êtes-vous sûr de vouloir supprimer cette demande ?"
         />
       )}
     </div>
