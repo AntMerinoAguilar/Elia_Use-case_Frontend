@@ -12,7 +12,8 @@ import Select from "./ui/Select";
 import MenuItem from "./ui/MenuItem";
 import axios from "axios";
 import { useAgent } from "../context/AgentContext";
-import {API_URL} from '../config/api.config'
+import { API_URL } from "../config/api.config";
+import { useNavigate } from "react-router-dom";
 
 const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
   const [selectedShift, setSelectedShift] = useState(null);
@@ -21,6 +22,7 @@ const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
   const [agentShifts, setAgentShifts] = useState([]); // Stocke les shifts de l'agent
   const [error, setError] = useState(""); // Gérer l'erreur dans la modal
   const { agent } = useAgent(); // Récupérer l'agent connecté
+  const navigate = useNavigate();
 
   // Met à jour les valeurs au changement de request
   useEffect(() => {
@@ -57,7 +59,7 @@ const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
       });
   }, [agent, request]); // Recharger la liste si l'agent ou la demande change
 
-  const handleAccept = () => {
+  const handleAccept = async () => {
     if (request.requestType === "Swap") {
       if (!selectedShift || !startTime || !endTime) {
         setError("Veuillez sélectionner un shift et un créneau horaire.");
@@ -103,19 +105,18 @@ const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
       } */
     }
 
-    console.log("Valeur sélectionnée au moment du clic :", selectedShift); ////// supp
-    // Si la logique côté backend échoue, on affiche l'erreur dans la modal
-    onAccept(request._id, { startTime, endTime }).catch((err) =>
-      setError(err.message)
-    ); // Capturer les erreurs retournées
-    onClose();
+    try {
+      await onAccept(request._id, { startTime, endTime });
 
-    if (response.status === 200) {
+      // Supprimer la demande de la liste
       setRequests((prevRequests) =>
         prevRequests.filter((req) => req._id !== request._id)
-      ); // Supprimer la demande de la liste
-    } else {
-      setError("Erreur lors de la suppression.");
+      );
+
+      onClose();
+      navigate("/calendar");
+    } catch (err) {
+      setError(err.message);
     }
   };
 
@@ -149,20 +150,21 @@ const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
   };
 
   return (
-    <Dialog open={open} onClose={onClose} 
-    style={{
-      width: "350px",
-      maxWidth: "90%", 
-      margin: "auto",
-      transform: "translate(-2%, 9.4%)"
-      
-      
-    }}
-    BackdropProps={{
-      style: {
-        backgroundColor: "transparent", // Supprime l'overlay en le rendant transparent
-      },
-    }}>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      style={{
+        width: "350px",
+        maxWidth: "90%",
+        margin: "auto",
+        transform: "translate(-2%, 9.4%)",
+      }}
+      BackdropProps={{
+        style: {
+          backgroundColor: "transparent", // Supprime l'overlay en le rendant transparent
+        },
+      }}
+    >
       <DialogTitle>
         Demande de {request.requestType}
         <IconButton
