@@ -1,67 +1,87 @@
 .form-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 15px;
-    padding: 20px;
-    height: 650px;
-    overflow-x: auto;
-    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
-    margin-left: 20px;
-    margin-right: 20px;
-    border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 15px;
+  padding: 20px;
+  height: 650px;
+  overflow-x: auto;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+  margin-left: 20px;
+  margin-right: 20px;
+  border-radius: 10px;
 }
 
 .form-container h2 {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
-
-
-
 .shift-request {
-    margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 
 .request-input {
-    height: 40px;
-    border-radius: 5px;
-    border: 1px solid
+  height: 40px;
+  border-radius: 5px;
+  border: 1px solid;
 }
 
-.request-type{
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 15px;
+.request-type {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 15px;
 }
 
 .urgent-checkbox {
-    display: flex;
+  display: flex;
 
-    align-items: center;
-    gap: 5px;
-    margin-left: 15px;
+  align-items: center;
+  gap: 5px;
+  margin-left: 15px;
 }
 
 .form-absence {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
 .form-absence input {
-    height: 40px;
-        border-radius: 5px;
-        border: 1px solid
+  height: 40px;
+  border-radius: 5px;
+  border: 1px solid;
 }
 
 .formbtn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
 }
 
 .form-container hr {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.success-message {
+  color: #155724;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: bold;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

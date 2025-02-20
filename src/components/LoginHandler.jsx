@@ -6,7 +6,7 @@ import LoginForm from "./LoginForm";
 const LoginHandler = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const { login } = useAgent(); // Utilise la fonction login du contexte
+  const { login, error } = useAgent(); // Utilise la fonction login du contexte
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -27,6 +27,7 @@ const LoginHandler = () => {
       onUsernameChange={(e) => setUsername(e.target.value)}
       onPasswordChange={(e) => setPassword(e.target.value)}
       onSubmit={handleLogin}
+      error={error}
     />
   );
 };

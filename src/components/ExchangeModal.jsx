@@ -14,6 +14,7 @@ import axios from "axios";
 import { useAgent } from "../context/AgentContext";
 import { API_URL } from "../config/api.config";
 import { useNavigate } from "react-router-dom";
+import ConfirmModal from "./ui/ConfirmModal";
 
 const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
   const [selectedShift, setSelectedShift] = useState(null);
@@ -23,6 +24,7 @@ const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
   const [error, setError] = useState(""); // Gérer l'erreur dans la modal
   const { agent } = useAgent(); // Récupérer l'agent connecté
   const navigate = useNavigate();
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   // Met à jour les valeurs au changement de request
   useEffect(() => {
@@ -120,7 +122,7 @@ const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
     }
   };
 
-  const handleDelete = async () => {
+  /* const handleDelete = async () => {
     const confirmDelete = window.confirm(
       "Êtes-vous sûr de vouloir supprimer votre demande ?"
     );
@@ -132,6 +134,32 @@ const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
         {
           withCredentials: true,
         }
+      );
+
+      onClose(); // Fermer la modal après suppression
+
+      if (response.status === 200) {
+        setRequests((prevRequests) =>
+          prevRequests.filter((req) => req._id !== request._id)
+        ); // Supprimer la demande de la liste
+      } else {
+        setError("Erreur lors de la suppression.");
+      }
+    } catch (error) {
+      console.error("Erreur lors de la suppression de la request :", error);
+      setError("Impossible de supprimer la demande.");
+    }
+  }; */
+
+  const handleDelete = async () => {
+    setIsConfirmOpen(true); // Ouvre la modal de confirmation
+  };
+
+  const confirmDeletion = async () => {
+    try {
+      const response = await axios.delete(
+        `${API_URL}/requests/${request._id}/cancel`,
+        { withCredentials: true }
       );
 
       onClose(); // Fermer la modal après suppression
@@ -336,6 +364,14 @@ const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
           </Button>
         )}
       </DialogActions>
+
+      <ConfirmModal
+        isOpen={isConfirmOpen}
+        onClose={() => setIsConfirmOpen(false)}
+        onConfirm={confirmDeletion}
+        title="Confirmer la suppression"
+        message="Êtes-vous sûr de vouloir supprimer cette demande ?"
+      />
     </Dialog>
   );
 };

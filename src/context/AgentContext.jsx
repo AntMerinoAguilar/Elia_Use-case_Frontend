@@ -1,12 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
-import {API_URL} from '../config/api.config';
+import { API_URL } from "../config/api.config";
 
 const AgentContext = createContext();
 
 export const AgentProvider = ({ children }) => {
   const [agent, setAgent] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const fetchAgent = async () => {
     setLoading(true);
@@ -34,9 +35,20 @@ export const AgentProvider = ({ children }) => {
         withCredentials: true,
       });
       await fetchAgent(); // 🔥 Recharge l'agent après connexion
+      setError("");
       return response.data;
     } catch (error) {
       console.error("Erreur de connexion :", error);
+
+      if (error.response && error.response.data) {
+        setError(
+          error.response.data.message ||
+            "Nom d'utilisateur ou mot de passe incorrect."
+        );
+      } else {
+        setError("Impossible de se connecter au serveur.");
+      }
+
       throw error;
     }
   };
@@ -50,10 +62,11 @@ export const AgentProvider = ({ children }) => {
     setAgent(null); // 🔥 Réinitialise l'agent après déconnexion
     await fetchAgent(); // 🔄 Vérifie immédiatement après si l'agent est bien null
   };
-  
 
   return (
-    <AgentContext.Provider value={{ agent, loading, login, logout, fetchAgent }}>
+    <AgentContext.Provider
+      value={{ agent, loading, login, logout, fetchAgent, error }}
+    >
       {children}
     </AgentContext.Provider>
   );

@@ -3,11 +3,13 @@ import axios from "axios";
 import AgentSelector from "./AgentSelector";
 import ShiftSelector from "./ShiftSelector";
 import { useAgent } from "../context/AgentContext";
-import {API_URL} from '../config/api.config'
-import '../styles/NewRequestForm.css'
+import { API_URL } from "../config/api.config";
+import "../styles/NewRequestForm.css";
 
 const NewRequestForm = () => {
   const { agent } = useAgent();
+
+  const [successMessage, setSuccessMessage] = useState("");
 
   const [formData, setFormData] = useState({
     requesterId: agent?._id || "",
@@ -35,7 +37,8 @@ const NewRequestForm = () => {
         const isReplacement = value === "Replacement";
         return {
           ...prev,
-          requestType: isReplacement && prev.isUrgent ? "Urgent Replacement" : value,
+          requestType:
+            isReplacement && prev.isUrgent ? "Urgent Replacement" : value,
           isUrgent: isReplacement ? prev.isUrgent : false,
           availableSlots: isReplacement ? [] : prev.availableSlots,
         };
@@ -78,14 +81,24 @@ const NewRequestForm = () => {
     today.setHours(0, 0, 0, 0);
 
     if (!formData.timeSlot.startTime || !formData.timeSlot.endTime) {
-      newErrors.timeSlot = "Veuillez remplir toutes les dates de la plage à remplacer.";
+      newErrors.timeSlot =
+        "Veuillez remplir toutes les dates de la plage à remplacer.";
     }
 
     if (formData.requestType === "Swap") {
-      if (!formData.availableSlots.length || !formData.availableSlots[0]?.startTime || !formData.availableSlots[0]?.endTime) {
-        newErrors.availableSlots = "Veuillez remplir la fourchette de disponibilité.";
-      } else if (new Date(formData.availableSlots[0].startTime) >= new Date(formData.availableSlots[0].endTime)) {
-        newErrors.availableSlots = "La date de début doit être avant la date de fin.";
+      if (
+        !formData.availableSlots.length ||
+        !formData.availableSlots[0]?.startTime ||
+        !formData.availableSlots[0]?.endTime
+      ) {
+        newErrors.availableSlots =
+          "Veuillez remplir la fourchette de disponibilité.";
+      } else if (
+        new Date(formData.availableSlots[0].startTime) >=
+        new Date(formData.availableSlots[0].endTime)
+      ) {
+        newErrors.availableSlots =
+          "La date de début doit être avant la date de fin.";
       } else if (
         new Date(formData.availableSlots[0].startTime) < today ||
         new Date(formData.availableSlots[0].endTime) < today
@@ -109,7 +122,10 @@ const NewRequestForm = () => {
         withCredentials: true,
       });
 
-      alert("Demande envoyée avec succès !");
+      setSuccessMessage("✅ Demande envoyée avec succès !");
+
+      setTimeout(() => setSuccessMessage(""), 3000);
+
       setFormData({
         requesterId: agent._id,
         shiftId: "",
@@ -126,91 +142,140 @@ const NewRequestForm = () => {
     }
   };
 
-
   return (
     <div className="form-container">
-    <form onSubmit={handleSubmit}>
-      <h2>Créer une demande</h2>
+      <form onSubmit={handleSubmit}>
+        <h2>Créer une demande</h2>
 
-      <h3>Shift</h3>
-      <div className="shift-request">
-      <label htmlFor="shiftId"></label>
-      <ShiftSelector
-        selectedShiftId={formData.shiftId}
-        onSelectShift={(shift) => {
-          const formatDateForInput = (isoString) => isoString ? new Date(isoString).toISOString().slice(0, 16) : "";
+        {/* ✅ Affichage du message de succès */}
+        {successMessage && <p className="success-message">{successMessage}</p>}
 
-          setDateLimits({
-            min: formatDateForInput(shift.startTime),
-            max: formatDateForInput(shift.endTime),
-          });
+        <h3>Shift</h3>
+        <div className="shift-request">
+          <label htmlFor="shiftId"></label>
+          <ShiftSelector
+            selectedShiftId={formData.shiftId}
+            onSelectShift={(shift) => {
+              const formatDateForInput = (isoString) =>
+                isoString ? new Date(isoString).toISOString().slice(0, 16) : "";
 
-          setFormData((prev) => ({
-            ...prev,
-            shiftId: shift.id,
-            availableSlots: prev.requestType === "Swap"
-              ? [{ startTime: formatDateForInput(shift.endTime), endTime: "" }]
-              : [],
-          }));
-        }}
-      />
-      </div>
-      <hr />
+              setDateLimits({
+                min: formatDateForInput(shift.startTime),
+                max: formatDateForInput(shift.endTime),
+              });
 
-      <h3>Type de demande</h3>
-      <div className="request-type">
-      <label htmlFor="requestType"></label>
-      <select name="requestType" value={formData.requestType} onChange={handleChange} className="request-input">
-        <option value="Replacement">Remplacement</option>
-        <option value="Swap">Échange</option>
-      </select>
-
-      {formData.requestType.includes("Replacement") && (
-        <div className="urgent-checkbox">
-          <label htmlFor="isUrgent">Urgent</label>
-          <input type="checkbox" id="isUrgent" name="isUrgent" checked={formData.isUrgent} onChange={handleChange} />
-          
+              setFormData((prev) => ({
+                ...prev,
+                shiftId: shift.id,
+                availableSlots:
+                  prev.requestType === "Swap"
+                    ? [
+                        {
+                          startTime: formatDateForInput(shift.endTime),
+                          endTime: "",
+                        },
+                      ]
+                    : [],
+              }));
+            }}
+          />
         </div>
-        
-      )}
-      </div>
-      <hr />
+        <hr />
 
-      <h3>Absence</h3>
-      <div className="form-absence">
-      <label>Début :</label>
-      <input type="datetime-local" name="timeSlot.startTime" value={formData.timeSlot.startTime} onChange={handleChange} min={dateLimits.min} max={dateLimits.max} required />
-      <br />
-      <label>Fin :</label>
-      <input type="datetime-local" name="timeSlot.endTime" value={formData.timeSlot.endTime} onChange={handleChange} min={dateLimits.min} max={dateLimits.max} required />
-      <hr />
+        <h3>Type de demande</h3>
+        <div className="request-type">
+          <label htmlFor="requestType"></label>
+          <select
+            name="requestType"
+            value={formData.requestType}
+            onChange={handleChange}
+            className="request-input"
+          >
+            <option value="Replacement">Remplacement</option>
+            <option value="Swap">Échange</option>
+          </select>
 
-      {formData.requestType === "Swap" && (
-        <>
-          <h3>Disponibilités</h3>
+          {formData.requestType.includes("Replacement") && (
+            <div className="urgent-checkbox">
+              <label htmlFor="isUrgent">Urgent</label>
+              <input
+                type="checkbox"
+                id="isUrgent"
+                name="isUrgent"
+                checked={formData.isUrgent}
+                onChange={handleChange}
+              />
+            </div>
+          )}
+        </div>
+        <hr />
+
+        <h3>Absence</h3>
+        <div className="form-absence">
           <label>Début :</label>
-          <input type="datetime-local" name="availableSlots.startTime" value={formData.availableSlots[0]?.startTime || ""} onChange={handleChange} min={dateLimits.max} />
+          <input
+            type="datetime-local"
+            name="timeSlot.startTime"
+            value={formData.timeSlot.startTime}
+            onChange={handleChange}
+            min={dateLimits.min}
+            max={dateLimits.max}
+            required
+          />
           <br />
           <label>Fin :</label>
-          <input type="datetime-local" name="availableSlots.endTime" value={formData.availableSlots[0]?.endTime || ""} onChange={handleChange} min={dateLimits.max} />
-          
-        </>
-      )}
-      </div>
-      <hr />
+          <input
+            type="datetime-local"
+            name="timeSlot.endTime"
+            value={formData.timeSlot.endTime}
+            onChange={handleChange}
+            min={dateLimits.min}
+            max={dateLimits.max}
+            required
+          />
+          <hr />
 
-      <h3>Destinataire</h3>
-      <label htmlFor="agentId"></label>
-      <AgentSelector onSelectAgent={(id) => setFormData((prev) => ({ ...prev, targetAgentId: id }))} />
+          {formData.requestType === "Swap" && (
+            <>
+              <h3>Disponibilités</h3>
+              <label>Début :</label>
+              <input
+                type="datetime-local"
+                name="availableSlots.startTime"
+                value={formData.availableSlots[0]?.startTime || ""}
+                onChange={handleChange}
+                min={dateLimits.max}
+              />
+              <br />
+              <label>Fin :</label>
+              <input
+                type="datetime-local"
+                name="availableSlots.endTime"
+                value={formData.availableSlots[0]?.endTime || ""}
+                onChange={handleChange}
+                min={dateLimits.max}
+              />
+            </>
+          )}
+        </div>
+        <hr />
 
-      {errors.submit && <p className="error">{errors.submit}</p>}
+        <h3>Destinataire</h3>
+        <label htmlFor="agentId"></label>
+        <AgentSelector
+          onSelectAgent={(id) =>
+            setFormData((prev) => ({ ...prev, targetAgentId: id }))
+          }
+        />
 
-      <div className="formbtn"><button type="submit" >Envoyer la demande</button></div>
-    </form>
+        {errors.submit && <p className="error">{errors.submit}</p>}
+
+        <div className="formbtn">
+          <button type="submit">Envoyer la demande</button>
+        </div>
+      </form>
     </div>
   );
 };
 
 export default NewRequestForm;
-
-
