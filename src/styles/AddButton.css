@@ -11,11 +11,11 @@
 
 .addbtn button {
     background: #E75420;
-    width: 15%;
+    width: 25%;
     color: white;
     border: none;
-box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
     border-radius: 20px;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
     padding: 8px 12px;
     cursor: pointer;
     transition: background 0.3s;
