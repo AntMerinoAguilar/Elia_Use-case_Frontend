@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAgent } from "../context/AgentContext";
-import { Link } from "react-router-dom"; 
+import { Link } from "react-router-dom";
+import {API_URL} from '../config/api.config' 
 import "../styles/Notifications.css"; 
 
 

@@ -5,6 +5,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css"; //importé pour appl
 import "../styles/calendarStyles.css";
 import axios from "axios"; //utilisé pour effectuer des requêtes HTTP pour récupérer les données du backend (les événements)
 import { display } from "@mui/system";
+import {API_URL} from '../config/api.config'
 
 const localizer = momentLocalizer(moment); // permet d'utiliser "Moment.js" pour gérer et formater les dates et heures dans le calendrier
 moment.updateLocale("fr", { week: { dow: 4 } }); // Définit jeudi (4) comme premier jour de la semaine
@@ -16,7 +17,7 @@ const MyCalendar = () => {
   // Récupérer les événements depuis le backend
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/shifts", {
+      .get(`${API_URL}/shifts`, {
         withCredentials: true, // Permet l'envoi des cookies
       }) //mettre le bon URL quand sera en production
       .then((response) => {

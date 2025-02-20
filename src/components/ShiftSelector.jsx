@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import {API_URL} from '../config/api.config'
 import '../styles/ShiftSelector.css'
 
 const ShiftSelector = ({ onSelectShift, selectedShiftId }) => {
@@ -9,7 +10,7 @@ const ShiftSelector = ({ onSelectShift, selectedShiftId }) => {
   useEffect(() => {
     const fetchShifts = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/api/shifts/me", {
+        const response = await axios.get(`${API_URL}/shifts/me`, {
           withCredentials: true,
         });
 

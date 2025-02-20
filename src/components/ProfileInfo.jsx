@@ -5,6 +5,7 @@ import LogoutButton from '../components/LogoutButton'
 import "../styles/ProfileInfo.css";
 import moment from "moment";
 import BalanceBar from "../components/BalanceBar"; // Adapte le chemin si besoin
+import {API_URL} from '../config/api.config'
 
 
 const formatDate = (dateString) => {
@@ -24,7 +25,7 @@ const AgentProfile = () => {
     if (!agent || !agent._id) return;
 
     axios
-      .get(`http://localhost:3000/api/agents/me`, { withCredentials: true })
+      .get(`${API_URL}/agents/me`, { withCredentials: true })
       .then((response) => setAgentData(response.data))
       .catch((error) => console.error("Erreur chargement agent :", error));
   }, [agent]);
@@ -35,7 +36,7 @@ const AgentProfile = () => {
     if (!agent || !agent._id) return;
 
     axios
-      .get(`http://localhost:3000/api/history/${agent._id}`, { withCredentials: true })
+      .get(`${API_URL}/history/${agent._id}`, { withCredentials: true })
       .then((response) => setHistory(response.data))
       .catch((error) => console.error("Erreur chargement historique :", error));
   }, [agent]);
@@ -43,7 +44,7 @@ const AgentProfile = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/agents", { withCredentials: true })
+      .get(`${API_URL}/agents`, { withCredentials: true })
       .then((response) => {
         setAllAgents(response.data);
         const max = Math.max(...response.data.map((a) => Math.abs(a.balance)), 1);
