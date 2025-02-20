@@ -26,10 +26,10 @@ img {
 .container {
     background-color: rgb(255, 255, 255);
     margin: 0 auto;
-    margin-top: 150px;
+    /* margin-top: 150px; */
     padding: 15px;
-    max-width: 390px;
-    height: 890px;
-    border-radius: 40px;
+    max-width: 425px;
+    height: 830px;
+    /* border-radius: 40px; */
     box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;;
 }

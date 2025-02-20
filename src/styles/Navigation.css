@@ -1,8 +1,8 @@
 .navbar {
-    padding-top : 15px;
+    padding-top : 10px;
     padding-right: 20px;
     padding-left: 15px;
-    margin-top: 20px;
+    margin-top: -10px;
     
     
     
@@ -30,13 +30,13 @@
 .navlinks {
     display: flex;
     flex-direction: row;
-    margin-top: 15px;
+    margin-top: 10px;
     gap: 15px;
     justify-content: flex-end;
     margin-bottom: 15px;
 }
 
 .navlink {
-    max-width: 20px;
-    max-height: 20px;
+    max-width: 25px;
+    max-height: 25px;
 }
