@@ -9,7 +9,7 @@ const Balance = () => {
   useEffect(() => {
     const fetchAgents = async () => {
       try {
-        const response = await fetch(`${API_URL}/api/agents`, {
+        const response = await fetch(`${API_URL}/agents`, {
           method: "GET",
           credentials: "include",
         });
