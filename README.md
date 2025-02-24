@@ -129,7 +129,7 @@ L'application sera disponible sur `https://eduty-groupe2.vercel.app/`.
 
 ---
 
-## 🗺️📈 Roadmap **Améliorations et fonctionnalités à venir :**
+## 🗺️📈 Roadmap (features à implémenter)
 
 ### 🔍 **Filtres avancés sur les demandes de changement**
 Amélioration de l'interface des demandes de changement avec des filtres permettant une gestion plus précise et rapide des demandes.
