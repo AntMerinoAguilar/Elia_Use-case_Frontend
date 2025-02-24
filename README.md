@@ -23,7 +23,7 @@ L'application est accessible à l'adresse suivante :
 
 ## 📌 Technologies utilisées
 
-- **Framework** : React.js avec Next.js
+- **Framework** : React.js
 - **Gestion des requêtes API** : Fetch / Axios
 - **Gestion de l'état** : Context API / useState
 - **Styles** : CSS et CSS inline
