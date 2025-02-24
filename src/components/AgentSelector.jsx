@@ -9,16 +9,16 @@ const AgentSelector = ({ onSelectAgent }) => {
   const { agent: currentAgent, loading: loadingCurrentAgent } = useAgent();
 
   // État local pour gérer la liste des agents et l'état de chargement
-  const [agents, setAgents] = useState([]); // Stocker les autres agents
-  const [loading, setLoading] = useState(true); // État de chargement
-  const [selectedAgent, setSelectedAgent] = useState(""); // Valeur sélectionnée
+  const [agents, setAgents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedAgent, setSelectedAgent] = useState("");
 
   useEffect(() => {
     const fetchAgents = async () => {
       try {
         // Appel API pour récupérer tous les agents
         const response = await axios.get(`${API_URL}/agents`, {
-          withCredentials: true, // Inclure les cookies pour l'authentification si nécessaire
+          withCredentials: true,
         });
 
         // Exclure l'agent connecté de la liste
@@ -43,8 +43,8 @@ const AgentSelector = ({ onSelectAgent }) => {
 
   // Gestion de la sélection dans la liste déroulante
   const handleChange = (e) => {
-    const selectedValue = e.target.value === "" ? undefined : e.target.value; // "" (Public) => undefined
-    setSelectedAgent(e.target.value); // Met à jour l'état local pour le <select>
+    const selectedValue = e.target.value === "" ? undefined : e.target.value; // "" : veut dire request Public => undefined
+    setSelectedAgent(e.target.value);
     onSelectAgent(selectedValue); // Transmet la valeur sélectionnée au parent
   };
 

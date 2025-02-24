@@ -31,11 +31,8 @@ const ExchangePage = () => {
           {activeTab === "exchange" ? <Exchange /> : <Balance />}
         </div>
       </div>
-      
     </div>
   );
 };
 
 export default ExchangePage;
-
-

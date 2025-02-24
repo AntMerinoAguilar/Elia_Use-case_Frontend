@@ -1,20 +1,20 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAgent } from "../context/AgentContext"; // Import du contexte
+import { useAgent } from "../context/AgentContext";
 import LoginForm from "./LoginForm";
 
 const LoginHandler = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const { login, error } = useAgent(); // Utilise la fonction login du contexte
+  const { login, error } = useAgent();
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      await login({ username, password }); // 🔥 Appelle la nouvelle fonction login()
-      navigate("/calendar"); // Redirige après connexion
+      await login({ username, password });
+      navigate("/calendar");
     } catch (error) {
       console.error("Erreur de connexion :", error);
     }

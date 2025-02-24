@@ -20,9 +20,9 @@ const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
   const [selectedShift, setSelectedShift] = useState(null);
   const [startTime, setStartTime] = useState(""); // Heure de début du sous-shift
   const [endTime, setEndTime] = useState(""); // Heure de fin du sous-shift
-  const [agentShifts, setAgentShifts] = useState([]); // Stocke les shifts de l'agent
-  const [error, setError] = useState(""); // Gérer l'erreur dans la modal
-  const { agent } = useAgent(); // Récupérer l'agent connecté
+  const [agentShifts, setAgentShifts] = useState([]);
+  const [error, setError] = useState("");
+  const { agent } = useAgent();
   const navigate = useNavigate();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
@@ -36,7 +36,7 @@ const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
 
   // Charger les shifts de l'agent connecté
   useEffect(() => {
-    if (!request || request.requestType !== "Swap") return; ///// potentiellement supp
+    if (!request || request.requestType !== "Swap") return;
 
     axios
       .get(`${API_URL}/shifts/me`, {
@@ -59,7 +59,7 @@ const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
       .catch((error) => {
         console.error("Erreur lors de la récupération des shifts :", error);
       });
-  }, [agent, request]); // Recharger la liste si l'agent ou la demande change
+  }, [agent, request]);
 
   const handleAccept = async () => {
     if (request.requestType === "Swap") {
@@ -95,16 +95,6 @@ const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
         setError("Veuillez sélectionner un créneau horaire.");
         return;
       }
-
-      /* const selectedStart = new Date(startTime).getTime();
-      const selectedEnd = new Date(endTime).getTime();
-      const shiftStart = new Date(request.timeSlot.startDate).getTime();
-      const shiftEnd = new Date(request.timeSlot.endDate).getTime();
-
-      if (selectedStart < shiftStart || selectedEnd > shiftEnd) {
-        setError("Le créneau choisi doit être compris dans le shift proposé.");
-        return;
-      } */
     }
 
     try {
@@ -122,37 +112,8 @@ const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
     }
   };
 
-  /* const handleDelete = async () => {
-    const confirmDelete = window.confirm(
-      "Êtes-vous sûr de vouloir supprimer votre demande ?"
-    );
-    if (!confirmDelete) return;
-
-    try {
-      const response = await axios.delete(
-        `${API_URL}/requests/${request._id}/cancel`,
-        {
-          withCredentials: true,
-        }
-      );
-
-      onClose(); // Fermer la modal après suppression
-
-      if (response.status === 200) {
-        setRequests((prevRequests) =>
-          prevRequests.filter((req) => req._id !== request._id)
-        ); // Supprimer la demande de la liste
-      } else {
-        setError("Erreur lors de la suppression.");
-      }
-    } catch (error) {
-      console.error("Erreur lors de la suppression de la request :", error);
-      setError("Impossible de supprimer la demande.");
-    }
-  }; */
-
   const handleDelete = async () => {
-    setIsConfirmOpen(true); // Ouvre la modal de confirmation
+    setIsConfirmOpen(true);
   };
 
   const confirmDeletion = async () => {
@@ -162,12 +123,13 @@ const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
         { withCredentials: true }
       );
 
-      onClose(); // Fermer la modal après suppression
+      onClose();
 
       if (response.status === 200) {
-        setRequests((prevRequests) =>
-          prevRequests.filter((req) => req._id !== request._id)
-        ); // Supprimer la demande de la liste
+        setRequests(
+          (prevRequests) =>
+            prevRequests.filter((req) => req._id !== request._id) // Supprimer la demande de la liste
+        );
       } else {
         setError("Erreur lors de la suppression.");
       }
@@ -189,7 +151,7 @@ const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
       }}
       BackdropProps={{
         style: {
-          backgroundColor: "transparent", // Supprime l'overlay en le rendant transparent
+          backgroundColor: "transparent",
         },
       }}
     >
@@ -253,7 +215,7 @@ const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
                   (slot) => slot._id === e.target.value
                 );
                 setSelectedShift(chosenShift);
-                setStartTime(""); // Reset startTime et endTime
+                setStartTime("");
                 setEndTime("");
               }}
             >
@@ -261,7 +223,7 @@ const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
                 Choisissez un shift
               </MenuItem>
               {[...agentShifts]
-                .sort((a, b) => new Date(a.startDate) - new Date(b.startDate)) // Trie du plus proche au plus lointain
+                .sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
                 .map((slot) => (
                   <MenuItem key={slot._id} value={slot._id}>
                     {new Date(slot.startDate).toLocaleString()} →{" "}
@@ -342,7 +304,6 @@ const ExchangeModal = ({ open, onClose, request, setRequests, onAccept }) => {
           </div>
         )}
 
-        {/* Afficher l'erreur si elle existe */}
         {error && <p style={{ color: "red" }}>{error}</p>}
       </DialogContent>
       <DialogActions>

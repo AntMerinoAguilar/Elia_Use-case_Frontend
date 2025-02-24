@@ -1,6 +1,11 @@
 import React from "react";
-import { AgentProvider } from "./context/AgentContext"; // Importer le Provider
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { AgentProvider } from "./context/AgentContext";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
@@ -25,6 +30,5 @@ function App() {
     </AgentProvider>
   );
 }
-
 
 export default App;

@@ -147,7 +147,6 @@ const NewRequestForm = () => {
       <form onSubmit={handleSubmit}>
         <h2>Créer une demande</h2>
 
-        {/* ✅ Affichage du message de succès */}
         {successMessage && <p className="success-message">{successMessage}</p>}
 
         <h3>Shift</h3>

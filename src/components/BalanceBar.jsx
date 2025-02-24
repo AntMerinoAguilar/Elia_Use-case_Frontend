@@ -2,7 +2,7 @@ import React from "react";
 import "../styles/Balance.css";
 
 const BalanceBar = ({ balance, maxBalance }) => {
-  if (maxBalance === 0) return null; // Évite la division par zéro
+  if (maxBalance === 0) return null;
 
   const balancePercentage = (Math.abs(balance) / maxBalance) * 50;
 

@@ -32,7 +32,11 @@ const LoginForm = ({
         />
       </div>
 
-      {error && <p className="erreur-login" style={{ color: "red" }}>{error}</p>}
+      {error && (
+        <p className="erreur-login" style={{ color: "red" }}>
+          {error}
+        </p>
+      )}
 
       <button type="submit" className="login-btn">
         Se connecter

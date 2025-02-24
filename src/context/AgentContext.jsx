@@ -34,7 +34,7 @@ export const AgentProvider = ({ children }) => {
       const response = await axios.post(`${API_URL}/auth/login`, credentials, {
         withCredentials: true,
       });
-      await fetchAgent(); // 🔥 Recharge l'agent après connexion
+      await fetchAgent();
       setError("");
       return response.data;
     } catch (error) {
@@ -59,8 +59,7 @@ export const AgentProvider = ({ children }) => {
     } catch (error) {
       console.error("Erreur de déconnexion :", error);
     }
-    setAgent(null); // 🔥 Réinitialise l'agent après déconnexion
-    await fetchAgent(); // 🔄 Vérifie immédiatement après si l'agent est bien null
+    setAgent(null);
   };
 
   return (
@@ -76,7 +75,7 @@ export const AgentProvider = ({ children }) => {
 export const useAgent = () => {
   const context = useContext(AgentContext);
   if (!context) {
-    throw new Error("useAgent must be used within an AgentProvider");
+    throw new Error("useAgent doit être utilisé dans un AgentProvider");
   }
   return context;
 };

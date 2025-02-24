@@ -6,7 +6,6 @@
   flex-direction: column;
   align-items: center;
   flex-direction: column;
-
 }
 
 .balance-container h2 {
@@ -15,32 +14,26 @@
 
 .balance-container ul {
   width: fit-content; /* Ajuste la largeur au contenu */
-  margin: 0 auto; /* Centre horizontalement */
+  margin: 0 auto;
   display: flex;
-    flex-direction: column;
-    /* Organise les éléments de la liste verticalement */
-    gap: 10px;
-    /* Espace entre chaque élément de la liste */
-  }
-   
-
-
+  flex-direction: column;
+  gap: 10px;
+}
 
 .balance-container li {
   padding-bottom: 10px;
   display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    flex-grow: 1;
-  
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  flex-grow: 1;
 }
 
 .balance-bar {
   position: relative;
-  width: 200px; /* Largeur totale */
-  height: 23px; /* Hauteur de la jauge */
-  background-color: #ddd; /* Couleur de fond */
+  width: 200px;
+  height: 23px;
+  background-color: #ddd;
   overflow: hidden;
   margin-top: 5px;
 }
@@ -72,4 +65,3 @@
 ul p {
   font-size: 1.3rem;
 }
-

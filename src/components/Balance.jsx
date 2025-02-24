@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../styles/Balance.css";
-import BalanceBar from "./BalanceBar"; // Ajout de l'import correct
-import {API_URL} from '../config/api.config'
+import BalanceBar from "./BalanceBar";
+import { API_URL } from "../config/api.config";
 
 const Balance = () => {
   const [agents, setAgents] = useState([]);
@@ -14,7 +14,8 @@ const Balance = () => {
           credentials: "include",
         });
 
-        if (!response.ok) throw new Error("Erreur lors de la récupération des agents");
+        if (!response.ok)
+          throw new Error("Erreur lors de la récupération des agents");
 
         const data = await response.json();
         setAgents(data);
@@ -27,7 +28,7 @@ const Balance = () => {
   }, []);
 
   // Calcul du max pour normaliser l'échelle des jauges
-  const maxBalance = Math.max(...agents.map(a => Math.abs(a.balance)), 1);
+  const maxBalance = Math.max(...agents.map((a) => Math.abs(a.balance)), 1);
 
   return (
     <div className="balance-container">
@@ -35,7 +36,9 @@ const Balance = () => {
       <ul>
         {agents.map((agent) => (
           <li key={agent._id}>
-            <p>{agent.name} {agent.surname} : {Math.round(agent.balance)} heures</p>
+            <p>
+              {agent.name} {agent.surname} : {Math.round(agent.balance)} heures
+            </p>
             <BalanceBar balance={agent.balance} maxBalance={maxBalance} />
           </li>
         ))}

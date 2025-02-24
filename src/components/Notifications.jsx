@@ -2,15 +2,14 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAgent } from "../context/AgentContext";
 import { Link } from "react-router-dom";
-import {API_URL} from '../config/api.config'
-import "../styles/Notifications.css"; 
-
+import { API_URL } from "../config/api.config";
+import "../styles/Notifications.css";
 
 const Notifications = () => {
   const { agent } = useAgent();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
- 
+
   useEffect(() => {
     if (!agent || !agent._id) return;
 
@@ -39,13 +38,15 @@ const Notifications = () => {
       .put(`${API_URL}/notif/${id}/read`, {}, { withCredentials: true })
       .then(() => {
         setNotifications((prev) =>
-          prev.map((notif) => (notif._id === id ? { ...notif, isRead: true } : notif))
+          prev.map((notif) =>
+            notif._id === id ? { ...notif, isRead: true } : notif
+          )
         );
       })
-      .catch((error) => console.error("Erreur lors de la mise à jour :", error));
+      .catch((error) =>
+        console.error("Erreur lors de la mise à jour :", error)
+      );
   };
-
-  console.log("Agent connecté :", agent);
 
   return (
     <div className="notifications-container">
@@ -57,7 +58,12 @@ const Notifications = () => {
       ) : (
         <ul className="notification-list">
           {notifications.map((notif) => (
-            <li key={notif._id} className={`notification-item ${notif.isRead ? "read" : "unread"}`}>
+            <li
+              key={notif._id}
+              className={`notification-item ${
+                notif.isRead ? "read" : "unread"
+              }`}
+            >
               <Link
                 to="/exchange"
                 onClick={() => !notif.isRead && markAsRead(notif._id)} // Marque la notif comme lue si elle ne l'est pas encore
@@ -76,7 +82,3 @@ const Notifications = () => {
 };
 
 export default Notifications;
-
-
-
-

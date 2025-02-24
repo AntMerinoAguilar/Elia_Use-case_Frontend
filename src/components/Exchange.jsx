@@ -11,11 +11,11 @@ const Exchange = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [openModal, setOpenModal] = useState(false); // État pour ouvrir/fermer le modal
-  const [selectedRequest, setSelectedRequest] = useState(null); // État pour stocker la demande sélectionnée
-  const { agent, loading: agentLoading } = useAgent(); // Récupérer l'agent connecté
-  const [confirmDelete, setConfirmDelete] = useState(false); // Nouvel état pour le modal de confirmation
-  const [requestToDelete, setRequestToDelete] = useState(null); // Stocker la request à supprimer
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const { agent, loading: agentLoading } = useAgent();
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [requestToDelete, setRequestToDelete] = useState(null);
 
   // Récupérer toutes les demandes depuis le backend et filtrer pour montrer à l'agent connecté
   useEffect(() => {
@@ -30,7 +30,7 @@ const Exchange = () => {
           const isRequester = request.requesterId?._id === agent._id;
           const isTarget = request.targetAgentId?._id === agent._id;
 
-          // ✅ Filtrer les requests visibles par l'agent connecté
+          // Filtrer les requests visibles par l'agent connecté
           return (
             request.requestType === "Replacement" || // Remplacement (tous les agents)
             request.requestType === "Urgent Replacement" || // Remplacement urgent (tous)
@@ -43,21 +43,22 @@ const Exchange = () => {
         setLoading(false);
       })
       .catch((err) => {
+        console.error("Erreur lors du chargement des demandes :", err);
         setError("Erreur lors du chargement des demandes.");
         setLoading(false);
       });
   }, [agent]);
 
-  // Ouvrir le modal de la request
+  // Fonction pour ouvrir le modal de la request
   const handleOpenModal = (request) => {
-    setSelectedRequest(request); // Stocke la demande sélectionnée
-    setOpenModal(true); // Ouvre le modal
+    setSelectedRequest(request);
+    setOpenModal(true);
   };
 
-  // Fermer le modal de la request
+  // Fonction pour fermer le modal de la request
   const handleCloseModal = () => {
     setOpenModal(false);
-    setSelectedRequest(null); // Réinitialiser la demande sélectionnée
+    setSelectedRequest(null);
   };
 
   // Fonction pour ouvrir le modal de confirmation
@@ -75,7 +76,7 @@ const Exchange = () => {
   // Fonction pour accepter la demande
   const handleAcceptRequest = async (requestId, selectedSlot) => {
     try {
-      const agentId = agent._id; // Récupérer l'ID de l'agent connecté
+      const agentId = agent._id; // Récupérer l'ID de l'agent connecté grâce à l'AgentProvider dans l'AgentContext
 
       // Préparer les données à envoyer
       const requestData = {
@@ -85,8 +86,6 @@ const Exchange = () => {
           endTime: selectedSlot.endTime,
         },
       };
-
-      console.log("Données envoyées :", requestData); ////// à supprimer
 
       // Effectuer l'appel API pour accepter la demande
       const response = await axios.put(
@@ -101,18 +100,16 @@ const Exchange = () => {
       );
 
       if (response.status === 200) {
-        console.log(response.data.message);
-        setRequests((prevRequests) =>
-          prevRequests.filter((req) => req._id !== requestId)
-        ); // Supprimer la demande acceptée de la liste
+        setRequests(
+          (prevRequests) => prevRequests.filter((req) => req._id !== requestId) // Supprimer la demande acceptée de la liste
+        );
       } else {
-        // Si le backend retourne une erreur, on l'affiche à l'utilisateur
         setError(response.data.error || "Erreur inconnue");
       }
     } catch (error) {
       console.error("Erreur lors de l'acceptation de la demande", error);
 
-      // Afficher plus de détails sur l'erreur retournée
+      // Affiche plus de détails sur l'erreur retournée
       if (error.response && error.response.data) {
         // Si l'erreur contient des informations supplémentaires du backend
         setError(
@@ -127,32 +124,6 @@ const Exchange = () => {
       }
     }
   };
-
-  /* // Fonction pour supprimer la demande
-  const handleDeleteRequest = async (requestId) => {
-    const confirmDelete = window.confirm(
-      "Êtes-vous sûr de vouloir supprimer votre demande ?"
-    );
-    if (!confirmDelete) return;
-
-    try {
-      const response = await axios.delete(
-        `${API_URL}/requests/${requestId}/cancel`,
-        { withCredentials: true }
-      );
-
-      if (response.status === 200) {
-        setRequests((prevRequests) =>
-          prevRequests.filter((req) => req._id !== requestId)
-        ); // Supprimer la demande de la liste
-      } else {
-        setError("Erreur lors de la suppression.");
-      }
-    } catch (error) {
-      console.error("Erreur lors de la suppression de la demande", error);
-      setError("Impossible de supprimer la demande.");
-    }
-  }; */
 
   const handleDeleteRequest = (requestId) => {
     setRequestToDelete(requestId);
@@ -178,17 +149,14 @@ const Exchange = () => {
     handleCloseConfirmModal(); // Fermer le modal après suppression
   };
 
-  // Gestion du chargement des infos de l'agent
   if (agentLoading) return <p>Chargement des informations de l'agent...</p>;
 
   return (
     <div className="exchange-container">
       <h2 className="exchange-title">Demandes</h2>
 
-      {/* Gestion des erreurs */}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {/* Affichage du chargement */}
       {loading ? (
         <p>Chargement des demandes...</p>
       ) : (
@@ -198,7 +166,7 @@ const Exchange = () => {
               <div
                 key={request._id}
                 className="request-card"
-                onClick={() => handleOpenModal(request)} // Ouvrir le modal au clic
+                onClick={() => handleOpenModal(request)}
               >
                 <p className="requester-name">
                   {request.requesterId.name} {request.requesterId.surname}
@@ -214,7 +182,7 @@ const Exchange = () => {
                   <button
                     className="delete-btn"
                     onClick={(e) => {
-                      e.stopPropagation(); // Empêche d'ouvrir la modal au clic
+                      e.stopPropagation();
                       handleDeleteRequest(request._id);
                     }}
                   >
@@ -244,7 +212,7 @@ const Exchange = () => {
         <ConfirmModal
           isOpen={confirmDelete}
           onClose={handleCloseConfirmModal}
-          onConfirm={confirmDeleteRequest} // Appelle la fonction de suppression
+          onConfirm={confirmDeleteRequest}
           title="Confirmer la suppression"
           message="Êtes-vous sûr de vouloir supprimer cette demande ?"
         />
