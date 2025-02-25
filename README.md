@@ -147,8 +147,8 @@ Implémentation d’une restriction empêchant les agents de soumettre une deman
 ### 📜 **Historique des changements de shifts**   
 Ajout d’une **section historique** permettant aux agents de consulter et suivre les changements de shifts passés. Un suivi détaillé des échanges sera accessible à tout moment.
 
-### 📲 **Intégration de Toastify pour les notifications**   
-Ajout de **Toastify** pour afficher des notifications de manière élégante et non intrusive. Les utilisateurs pourront recevoir des notifications de succès, d'erreur ou d'information avec des animations et des styles personnalisables, améliorant ainsi l’expérience utilisateur et la réactivité de l'application.
+### 📲 **Intégration de Toastify pour les alertes**   
+Ajout de **Toastify** pour afficher des alertes de manière élégante et non intrusive. Les utilisateurs pourront recevoir des alertes de succès, d'erreur ou d'information avec des animations et des styles personnalisables, améliorant ainsi l’expérience utilisateur et la réactivité de l'application.
 
 ---
 
